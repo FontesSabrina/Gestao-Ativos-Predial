@@ -10,7 +10,8 @@ import '../../pages/usuarios/cadastro_usuario_page.dart';
 import '../../pages/ativos/cadastro_ambiente_page.dart';
 import '../../pages/manutencao/minhas_ordens_page.dart';
 import '../../core/theme/theme_controller.dart';
-import '../../main.dart'; // Import necessário para acessar o fontScaleNotifier
+import '../../main.dart';
+import '../../pages/usuarios/lista_usuarios_page.dart';
 
 class HomePage extends StatefulWidget {
   final Usuario usuario;
@@ -170,9 +171,11 @@ class _HomePageState extends State<HomePage> {
                 _buildCardServico("Manutenção Preventiva", "Calendário e alertas", Icons.calendar_today_rounded, Colors.teal.shade700, Colors.teal.shade50, () => Navigator.pushNamed(context, '/planejamento-preventivas', arguments: widget.usuario)),
                 _buildCardServico("Estoque e Peças", "Níveis mínimos e fornecedores", Icons.inventory_2_outlined, Colors.orange.shade700, Colors.orange.shade50, () => Navigator.pushNamed(context, '/estoque', arguments: widget.usuario).then((_) => _carregarDadosDoSistema()), badgeCount: _estoqueCriticoCount),
                 _buildCardServico("Indicadores e BI", "Custo e eficiência", Icons.insights_rounded, Colors.purple.shade700, Colors.purple.shade50, () => Navigator.pushNamed(context, '/indicadores', arguments: widget.usuario)),
-                _buildCardServico("Cadastro de Usuários", "Gerenciar acessos", Icons.person_add_alt_1, Colors.lime.shade800, Colors.lime.shade50, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CadastroUsuarioPage()))),
-                _buildCardServico("Cadastrar Ambiente", "Adicionar locais", Icons.add_location_alt, Colors.pink.shade700, Colors.pink.shade50, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CadastroAmbientePage()))),
+                _buildCardServico("Cadastro de Usuários", "Gerenciar acessos", Icons.person_add_alt_1, Colors.lime.shade800, Colors.lime.shade50, () => Navigator.pushNamed(context, '/usuarios', arguments: widget.usuario)),
+                                _buildCardServico("Cadastrar Ambiente", "Adicionar locais", Icons.add_location_alt, Colors.pink.shade700, Colors.pink.shade50, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CadastroAmbientePage()))),
               ],
+
+
               
               if (isTecnico) ...[
                 _buildCardServico("Minhas Ordens", "Tarefas atribuídas a você", Icons.assignment_ind_rounded, Colors.indigo.shade700, Colors.indigo.shade50, () => Navigator.push(context, MaterialPageRoute(builder: (_) => MinhasOrdensPage(usuarioLogado: widget.usuario)))),

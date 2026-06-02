@@ -5,7 +5,9 @@ import '../../domain/entities/usuario.dart';
 import '../../domain/repositories/usuario_repository.dart';
 
 class CadastroUsuarioPage extends StatefulWidget {
-  const CadastroUsuarioPage({super.key});
+  final Usuario? usuario;
+
+  const CadastroUsuarioPage({super.key, this.usuario});
 
   @override
   State<CadastroUsuarioPage> createState() => _CadastroUsuarioPageState();
@@ -18,16 +20,32 @@ class _CadastroUsuarioPageState extends State<CadastroUsuarioPage> {
   final _senhaController = TextEditingController();
   final _confirmarSenhaController = TextEditingController();
   
-  static const Color azulFixo = Color(0xFF1A237E);
+  Perfil _perfilSelecionado = Perfil.solicitante;
+  static const Color azulFixo = Color(0xFF1A237E); // Padrão de cor do sistema
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.usuario != null) {
+      _nomeController.text = widget.usuario!.nome;
+      _emailController.text = widget.usuario!.email;
+      _perfilSelecionado = widget.usuario!.perfil;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final bool isEdicao = widget.usuario != null;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF121212),
       appBar: AppBar(
-        title: const Text("Novo Usuário", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        title: Text(
+          isEdicao ? "Editar Usuário" : "Novo Usuário", 
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)
+        ),
         backgroundColor: azulFixo,
         centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.white), // Seta branca
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -37,9 +55,10 @@ class _CadastroUsuarioPageState extends State<CadastroUsuarioPage> {
             child: Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: const Color(0xFF1E1E1E),
+                color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.white24, width: 1.5),
+                // Borda para manter o padrão visual do cadastro de ambiente
+                border: Border.all(color: Colors.grey.withOpacity(0.5), width: 1.5),
               ),
               child: Form(
                 key: _formKey,
@@ -49,22 +68,54 @@ class _CadastroUsuarioPageState extends State<CadastroUsuarioPage> {
                     const SizedBox(height: 16),
                     _buildTextField(_emailController, "E-mail", Icons.email, false),
                     const SizedBox(height: 16),
+                    
+                    DropdownButtonFormField<Perfil>(
+                      value: _perfilSelecionado,
+                      decoration: const InputDecoration(
+                        labelText: "Perfil de Acesso", 
+                        prefixIcon: Icon(Icons.admin_panel_settings, color: azulFixo),
+                        border: OutlineInputBorder()
+                      ),
+                      items: Perfil.values.map((p) => DropdownMenuItem(
+                        value: p, 
+                        child: Text(p.name.toUpperCase())
+                      )).toList(),
+                      onChanged: (p) => setState(() => _perfilSelecionado = p!),
+                    ),
+                    const SizedBox(height: 16),
+
                     _buildTextField(_senhaController, "Senha", Icons.lock, true),
                     const SizedBox(height: 16),
                     _buildTextField(_confirmarSenhaController, "Confirmar Senha", Icons.lock_outline, true,
-                      validator: (value) => value != _senhaController.text ? "As senhas não coincidem" : null),
+                        validator: (value) => value != _senhaController.text ? "As senhas não coincidem" : null),
+                    
                     const SizedBox(height: 24),
                     SizedBox(
                       width: double.infinity,
                       height: 50,
                       child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(backgroundColor: azulFixo, foregroundColor: Colors.white),
-                        onPressed: () {
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: azulFixo,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            // Lógica de salvar
+                            final novoUsuario = Usuario(
+                              id: widget.usuario?.id ?? const Uuid().v4(),
+                              nome: _nomeController.text,
+                              email: _emailController.text,
+                              senha: _senhaController.text,
+                              perfil: _perfilSelecionado,
+                            );
+                            
+                            await GetIt.I<UsuarioRepository>().salvar(novoUsuario);
+                            if (mounted) Navigator.pop(context);
                           }
                         },
-                        child: const Text("CADASTRAR", style: TextStyle(fontWeight: FontWeight.bold)),
+                        child: Text(
+                          isEdicao ? "SALVAR ALTERAÇÕES" : "CADASTRAR",
+                          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ),
                   ],
@@ -81,13 +132,10 @@ class _CadastroUsuarioPageState extends State<CadastroUsuarioPage> {
     return TextFormField(
       controller: controller,
       obscureText: isPassword,
-      style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: Colors.white70),
         prefixIcon: Icon(icon, color: azulFixo),
-        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)),
-        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: azulFixo, width: 2)),
+        border: const OutlineInputBorder(),
       ),
       validator: validator ?? (value) => value!.isEmpty ? "Campo obrigatório" : null,
     );

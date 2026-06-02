@@ -6,11 +6,14 @@ import 'package:printing/printing.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../domain/entities/ordem_servico.dart';
 import '../../../domain/entities/ativo.dart';
+import '../../../domain/entities/usuario.dart'; // Importante adicionar este import
 import '../../../domain/services/ordem_servico_domain_services.dart';
 import '../../../domain/repositories/ativo_repository.dart';
 
 class IndicadoresPage extends StatefulWidget {
-  const IndicadoresPage({super.key});
+  final Usuario usuario; // Recebe o usuário
+
+  const IndicadoresPage({super.key, required this.usuario}); // Construtor atualizado
 
   @override
   State<IndicadoresPage> createState() => _IndicadoresPageState();
