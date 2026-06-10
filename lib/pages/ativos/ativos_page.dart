@@ -17,14 +17,13 @@ class _AtivosPageState extends State<AtivosPage> {
   final repository = GetIt.I<AtivoRepository>(); 
   String _busca = "";
   
-  // Definindo a cor azul fixa do seu sistema
   static const Color azulFixo = Color(0xFF1A237E);
 
   void _confirmarExclusao(BuildContext context, Ativo ativo) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Excluir Ativo'),
+        title: const Text('Excluir'),
         content: Text('Tem certeza que deseja excluir "${ativo.nome}"?'),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: const Text('CANCELAR')),
@@ -36,7 +35,7 @@ class _AtivosPageState extends State<AtivosPage> {
                 setState(() {});
               }
             },
-            child: const Text('EXCLUIR', style: TextStyle(color: Colors.red)),
+            child: const Text('Excluir', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -46,14 +45,14 @@ class _AtivosPageState extends State<AtivosPage> {
   @override
   Widget build(BuildContext context) {
     final bool podeEditar = widget.usuario.perfil == Perfil.administrador;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('Gestão de Ativos', 
             style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
         centerTitle: true,
-        backgroundColor: azulFixo, // Azul fixo no cabeçalho
+        backgroundColor: azulFixo,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Center(
@@ -62,17 +61,14 @@ class _AtivosPageState extends State<AtivosPage> {
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.all(15.0),
+                padding: const EdgeInsets.all(16.0),
                 child: TextField(
                   decoration: InputDecoration(
-                    hintText: 'Pesquisar por nome ou patrimônio...',
-                    prefixIcon: const Icon(Icons.search, color: azulFixo), // Azul fixo
+                    labelText: 'Buscar...',
+                    prefixIcon: const Icon(Icons.search, color: azulFixo),
+                    border: const OutlineInputBorder(),
                     filled: true,
-                    fillColor: Theme.of(context).brightness == Brightness.dark ? Colors.grey[800] : Colors.white,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide.none,
-                    ),
+                    fillColor: isDark ? Colors.white10 : Colors.white,
                   ),
                   onChanged: (value) => setState(() => _busca = value.toLowerCase()),
                 ),
@@ -83,7 +79,7 @@ class _AtivosPageState extends State<AtivosPage> {
                   future: repository.buscarTodos(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
+                      return const Center(child: CircularProgressIndicator(color: azulFixo));
                     }
                     if (snapshot.hasError) return const Center(child: Text("Erro ao carregar ativos."));
                     
@@ -94,12 +90,12 @@ class _AtivosPageState extends State<AtivosPage> {
                     if (listaFiltrada.isEmpty) return const Center(child: Text("Nenhum ativo encontrado."));
 
                     return ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
                       itemCount: listaFiltrada.length,
                       itemBuilder: (context, index) {
                         final ativo = listaFiltrada[index];
                         return Card(
-                          elevation: 2,
-                          margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                          margin: const EdgeInsets.only(bottom: 12),
                           child: ListTile(
                             onTap: podeEditar ? () async {
                               await Navigator.push(context, MaterialPageRoute(
@@ -107,12 +103,12 @@ class _AtivosPageState extends State<AtivosPage> {
                               ));
                               setState(() {}); 
                             } : null,
-                            leading: const CircleAvatar(
-                              backgroundColor: Color(0xFFE8EAF6), // Mantém o tom claro do azul
-                              child: Icon(Icons.computer, color: azulFixo), // Azul fixo
+                            leading: CircleAvatar(
+                              backgroundColor: azulFixo.withOpacity(0.1),
+                              child: const Icon(Icons.computer, color: azulFixo),
                             ),
                             title: Text(ativo.nome, style: const TextStyle(fontWeight: FontWeight.bold)),
-                            subtitle: Text("Patrimônio: ${ativo.patrimonio}\nLocal: ${ativo.localizacao}"),
+                            subtitle: Text("Patrimônio: ${ativo.patrimonio} | Local: ${ativo.localizacao}"),
                             trailing: podeEditar ? IconButton(
                               icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
                               onPressed: () => _confirmarExclusao(context, ativo),
@@ -129,7 +125,7 @@ class _AtivosPageState extends State<AtivosPage> {
         ),
       ),
       floatingActionButton: podeEditar ? FloatingActionButton(
-        backgroundColor: azulFixo, // Azul fixo no botão
+        backgroundColor: azulFixo,
         onPressed: () async {
           await Navigator.push(context, MaterialPageRoute(builder: (_) => AtivoFormPage(usuario: widget.usuario)));
           setState(() {});

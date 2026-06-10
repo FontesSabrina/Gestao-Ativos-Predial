@@ -5,7 +5,7 @@ import '../../domain/entities/usuario.dart';
 import '../../domain/entities/ativo.dart';
 import '../../domain/repositories/ordem_servico_repository.dart';
 import '../../domain/repositories/ativo_repository.dart';
-import '../../pages/ordem_servico/ordem_servico_execucao_page.dart';
+import 'ordens/ordem_servico_execucao_page.dart';
 
 class MinhasOrdensPage extends StatefulWidget {
   final Usuario usuarioLogado;

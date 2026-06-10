@@ -20,27 +20,37 @@ class _EstoqueFormPageState extends State<EstoqueFormPage> {
   final _qtdController = TextEditingController();
   final _nivelMinimoController = TextEditingController(text: '5');
   final _fornecedorController = TextEditingController();
-  final _unidadeController = TextEditingController(text: 'Unidade');
+  final _unidadeController = TextEditingController(); 
   final _precoController = TextEditingController(text: '0.0');
 
   static const Color azulFixo = Color(0xFF1A237E);
 
   Future<void> _salvar() async {
     if (_formKey.currentState!.validate()) {
-      final novoItem = ItemEstoque(
-        id: const Uuid().v4(),
-        nome: _nomeController.text,
-        quantidade: int.tryParse(_qtdController.text) ?? 0,
-        nivelMinimo: int.tryParse(_nivelMinimoController.text) ?? 5,
-        unidadeMedida: _unidadeController.text.isNotEmpty ? _unidadeController.text : 'Unidade',
-        fornecedor: _fornecedorController.text.isNotEmpty ? _fornecedorController.text : 'Sem fornecedor',
-        precoUnitario: double.tryParse(_precoController.text.replaceAll(',', '.')) ?? 0.0,
-      );
-      
-      await _service.salvar(novoItem);
-      
-      if (!mounted) return;
-      Navigator.pop(context, true);
+      try {
+        final novoItem = ItemEstoque(
+          id: const Uuid().v4(),
+          nome: _nomeController.text,
+          quantidade: int.tryParse(_qtdController.text) ?? 0,
+          nivelMinimo: int.tryParse(_nivelMinimoController.text) ?? 5,
+          unidadeMedida: _unidadeController.text.isNotEmpty ? _unidadeController.text : 'Un',
+          fornecedor: _fornecedorController.text.isNotEmpty ? _fornecedorController.text : 'Sem fornecedor',
+          precoUnitario: double.tryParse(_precoController.text.replaceAll(',', '.')) ?? 0.0,
+        );
+        
+        await _service.salvar(novoItem);
+        
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Item cadastrado com sucesso!"), backgroundColor: Colors.green),
+        );
+        Navigator.pop(context, true);
+      } catch (e) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Erro ao salvar o item."), backgroundColor: Colors.red),
+        );
+      }
     }
   }
 
@@ -60,7 +70,7 @@ class _EstoqueFormPageState extends State<EstoqueFormPage> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('Novo Item de Estoque', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+        title: const Text('Cadastrar Estoque', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
         backgroundColor: azulFixo,
         iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,
@@ -84,7 +94,8 @@ class _EstoqueFormPageState extends State<EstoqueFormPage> {
                         children: [
                           Expanded(child: _buildTextField(_qtdController, "Qtd. Atual", Icons.numbers, isNumber: true)),
                           const SizedBox(width: 16),
-                          Expanded(child: _buildTextField(_unidadeController, "Unidade", Icons.straighten)),
+                          // Alteração aqui: isLettersOnly: true para restringir a apenas letras
+                          Expanded(child: _buildTextField(_unidadeController, "Unidade", Icons.straighten, isLettersOnly: true, hintText: "Ex: Kg, L, Un")),
                         ],
                       ),
                       const SizedBox(height: 16),
@@ -103,11 +114,8 @@ class _EstoqueFormPageState extends State<EstoqueFormPage> {
                         height: 50,
                         child: ElevatedButton(
                           onPressed: _salvar, 
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: azulFixo,
-                            foregroundColor: Colors.white,
-                          ),
-                          child: const Text('SALVAR ITEM', style: TextStyle(fontWeight: FontWeight.bold)),
+                          style: ElevatedButton.styleFrom(backgroundColor: azulFixo, foregroundColor: Colors.white),
+                          child: const Text('Salvar', style: TextStyle(fontWeight: FontWeight.bold)),
                         ),
                       )
                     ],
@@ -121,15 +129,18 @@ class _EstoqueFormPageState extends State<EstoqueFormPage> {
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String label, IconData icon, {bool isNumber = false, bool isDecimal = false}) {
+  Widget _buildTextField(TextEditingController controller, String label, IconData icon, {bool isNumber = false, bool isDecimal = false, bool isLettersOnly = false, String? hintText}) {
     return TextFormField(
       controller: controller,
-      keyboardType: isNumber || isDecimal ? TextInputType.number : TextInputType.text,
-      inputFormatters: isNumber 
-        ? [FilteringTextInputFormatter.digitsOnly] 
-        : isDecimal ? [FilteringTextInputFormatter.allow(RegExp(r'^\d*[\.,]?\d*'))] : [],
+      keyboardType: isNumber ? TextInputType.number : (isDecimal ? const TextInputType.numberWithOptions(decimal: true) : TextInputType.text),
+      inputFormatters: [
+        if (isNumber) FilteringTextInputFormatter.digitsOnly,
+        if (isDecimal) FilteringTextInputFormatter.allow(RegExp(r'^\d*[\.,]?\d*')),
+        if (isLettersOnly) FilteringTextInputFormatter.allow(RegExp(r'[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ\s]')),
+      ],
       decoration: InputDecoration(
         labelText: label,
+        hintText: hintText,
         prefixIcon: Icon(icon, color: azulFixo),
         border: const OutlineInputBorder(),
       ),

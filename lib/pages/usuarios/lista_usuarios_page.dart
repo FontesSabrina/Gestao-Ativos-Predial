@@ -71,7 +71,7 @@ class _ListaUsuariosPageState extends State<ListaUsuariosPage> {
         title: const Text("Gestão de Usuários", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         backgroundColor: azulFixo,
         centerTitle: true,
-        iconTheme: const IconThemeData(color: Colors.white), // Garante que a seta de voltar seja branca
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: azulFixo,
@@ -79,7 +79,7 @@ class _ListaUsuariosPageState extends State<ListaUsuariosPage> {
           await Navigator.push(context, MaterialPageRoute(builder: (_) => const CadastroUsuarioPage()));
           _carregar();
         },
-        child: const Icon(Icons.add, color: Colors.white), // Ícone forçado branco
+        child: const Icon(Icons.add, color: Colors.white),
       ),
       body: Center(
         child: ConstrainedBox(
@@ -102,7 +102,12 @@ class _ListaUsuariosPageState extends State<ListaUsuariosPage> {
                     Wrap(
                       spacing: 8,
                       children: [
-                        FilterChip(label: const Text("Todos"), selected: _filtroPerfil == null, onSelected: (_) { _filtroPerfil = null; _filtrar(); }),
+                        FilterChip(
+                          label: const Text("Todos"), 
+                          selected: _filtroPerfil == null, 
+                          onSelected: (_) { _filtroPerfil = null; _filtrar(); }
+                        ),
+                        // Geramos os chips baseados nos valores atuais do Enum
                         ...Perfil.values.map((p) => FilterChip(
                           label: Text(p.name.toUpperCase()),
                           selected: _filtroPerfil == p,
@@ -125,7 +130,6 @@ class _ListaUsuariosPageState extends State<ListaUsuariosPage> {
                         leading: CircleAvatar(backgroundColor: azulFixo.withOpacity(0.1), child: Icon(Icons.person, color: azulFixo)),
                         title: Text(u.nome, style: const TextStyle(fontWeight: FontWeight.bold)),
                         subtitle: Text("Perfil: ${u.perfil.name.toUpperCase()} | ${u.email}"),
-                        // Forçando a lixeira a ser vermelha e visível
                         trailing: IconButton(icon: const Icon(Icons.delete_outline, color: Colors.red), onPressed: () => _excluir(u)),
                         onTap: () async {
                           await Navigator.push(context, MaterialPageRoute(builder: (_) => CadastroUsuarioPage(usuario: u)));

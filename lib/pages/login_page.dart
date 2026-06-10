@@ -16,6 +16,9 @@ class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _senhaController = TextEditingController();
   
+  // Estado para controlar a visibilidade da senha
+  bool _senhaVisivel = false;
+  
   late final UsuarioDomainServices _service;
   bool _carregando = false;
 
@@ -38,7 +41,6 @@ class _LoginPageState extends State<LoginPage> {
 
       if (usuario != null) {
         if (mounted) {
-          // Redireciona todos para a HomePage conforme solicitado
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => HomePage(usuario: usuario)),
@@ -105,9 +107,13 @@ class _LoginPageState extends State<LoginPage> {
                   Text('AURA', style: TextStyle(fontSize: 35, fontWeight: FontWeight.w900, color: Colors.indigo[900], letterSpacing: 4)),
                   const Text('RESTRITO PARA COLABORADORES', style: TextStyle(color: Colors.grey, fontSize: 11, fontWeight: FontWeight.w700, letterSpacing: 1.2)),
                   const SizedBox(height: 45),
+                  
                   _buildTextField(controller: _emailController, label: 'Usuário / E-mail', icon: Icons.person_pin_rounded),
                   const SizedBox(height: 20),
+                  
+                  // Campo de senha atualizado
                   _buildTextField(controller: _senhaController, label: 'Senha', icon: Icons.vpn_key_rounded, isPassword: true),
+                  
                   const SizedBox(height: 40),
                   SizedBox(
                     width: double.infinity,
@@ -132,11 +138,22 @@ class _LoginPageState extends State<LoginPage> {
   Widget _buildTextField({required TextEditingController controller, required String label, required IconData icon, bool isPassword = false}) {
     return TextField(
       controller: controller,
-      obscureText: isPassword,
+      obscureText: isPassword ? !_senhaVisivel : false,
       decoration: InputDecoration(
         labelText: label,
         labelStyle: const TextStyle(color: Colors.black45, fontWeight: FontWeight.w600),
         prefixIcon: Icon(icon, color: Colors.indigo[900]),
+        // Adicionando o ícone do olho apenas se for campo de senha
+        suffixIcon: isPassword
+            ? IconButton(
+                icon: Icon(_senhaVisivel ? Icons.visibility : Icons.visibility_off, color: Colors.indigo[900]),
+                onPressed: () {
+                  setState(() {
+                    _senhaVisivel = !_senhaVisivel;
+                  });
+                },
+              )
+            : null,
         filled: true,
         fillColor: const Color(0xFFF0F2F5),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),

@@ -6,7 +6,6 @@ import 'widgets/lista_por_status_widget.dart';
 class AcompanhamentoRealTimePage extends StatelessWidget {
   final Usuario usuario;
 
-  // Ajuste das cores para o padrão escuro do sistema
   static const Color primaryColor = Color(0xFF1A237E);
   static const Color darkBackgroundColor = Color(0xFF121212);
   static const Color indicatorColor = Colors.amber;
@@ -18,7 +17,7 @@ class AcompanhamentoRealTimePage extends StatelessWidget {
     return DefaultTabController(
       length: 4, 
       child: Scaffold(
-        backgroundColor: darkBackgroundColor, // Fundo escuro aplicado
+        backgroundColor: darkBackgroundColor,
         appBar: AppBar(
           title: const Text(
             'Painel em Tempo Real',
@@ -27,7 +26,7 @@ class AcompanhamentoRealTimePage extends StatelessWidget {
           backgroundColor: primaryColor,
           foregroundColor: Colors.white,
           centerTitle: true,
-          elevation: 0, // Removido elevação para visual clean no escuro
+          elevation: 0,
           bottom: const TabBar(
             isScrollable: true,
             indicatorColor: indicatorColor,
@@ -36,27 +35,20 @@ class AcompanhamentoRealTimePage extends StatelessWidget {
             unselectedLabelColor: Colors.white70,
             labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
             tabs: [
-              Tab(
-                  text: 'Abertos',
-                  icon: Icon(Icons.assignment_late_outlined, size: 20)),
-              Tab(
-                  text: 'Em Execução',
-                  icon: Icon(Icons.play_circle_outline_rounded, size: 20)),
-              Tab(
-                  text: 'Concluídos',
-                  icon: Icon(Icons.check_circle_outline, size: 20)),
-              Tab(
-                  text: 'Cancelados',
-                  icon: Icon(Icons.cancel_outlined, size: 20)),
+              Tab(text: 'Abertos', icon: Icon(Icons.assignment_late_outlined, size: 20)),
+              Tab(text: 'Em Execução', icon: Icon(Icons.play_circle_outline_rounded, size: 20)),
+              Tab(text: 'Concluídos', icon: Icon(Icons.check_circle_outline, size: 20)),
+              Tab(text: 'Cancelados', icon: Icon(Icons.cancel_outlined, size: 20)),
             ],
           ),
         ),
-        body: const TabBarView(
+        // CORREÇÃO: Passando o usuário para cada widget de lista
+        body: TabBarView(
           children: [
-            ListaPorStatusWidget(statusFiltrado: StatusChamado.aberto),
-            ListaPorStatusWidget(statusFiltrado: StatusChamado.emExecucao),
-            ListaPorStatusWidget(statusFiltrado: StatusChamado.concluido),
-            ListaPorStatusWidget(statusFiltrado: StatusChamado.cancelado),
+            ListaPorStatusWidget(statusFiltrado: StatusChamado.aberto, usuario: usuario),
+            ListaPorStatusWidget(statusFiltrado: StatusChamado.emExecucao, usuario: usuario),
+            ListaPorStatusWidget(statusFiltrado: StatusChamado.concluido, usuario: usuario),
+            ListaPorStatusWidget(statusFiltrado: StatusChamado.cancelado, usuario: usuario),
           ],
         ),
       ),

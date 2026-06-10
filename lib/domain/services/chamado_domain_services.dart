@@ -1,10 +1,10 @@
 import '../entities/chamado.dart';
 import '../entities/usuario.dart';
 import '../entities/ordem_servico.dart';
-import '../entities/notificacao.dart'; // Importante adicionar
+import '../entities/notificacao.dart';
 import '../repositories/ordem_servico_repository.dart';
 import '../repositories/chamado_repository.dart';
-import '../repositories/notificacao_repository.dart'; // Importante adicionar
+import '../repositories/notificacao_repository.dart';
 
 class ChamadoDomainServices {
   final OrdemServicoRepository _osRepository;
@@ -17,7 +17,6 @@ class ChamadoDomainServices {
     this._notificacaoRepository
   );
 
-  // --- Método Auxiliar Privado ---
   Future<void> _enviarNotificacao(String titulo, String mensagem, String usuarioId) async {
     final novaNotificacao = Notificacao(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -30,20 +29,30 @@ class ChamadoDomainServices {
     await _notificacaoRepository.adicionarNotificacao(novaNotificacao);
   }
 
-  // --- Métodos de Negócio ---
-
   Future<List<Chamado>> buscarTodos() async => await _chamadoRepository.buscarTodos();
 
   Future<void> registrarChamado(Chamado chamado) async => await _chamadoRepository.salvar(chamado);
 
+  Future<void> cancelarChamado(Chamado chamado) async {
+    await _chamadoRepository.atualizarStatus(chamado.id, StatusChamado.cancelado);
+    await _enviarNotificacao(
+      "Chamado Cancelado",
+      "O chamado para o ativo '${chamado.ativo.nome}' foi cancelado pelo gestor.",
+      chamado.solicitante.id
+    );
+  }
+
   Future<void> aprovarChamadoEGerarOS({
     required Chamado chamado,
     required Usuario tecnico,
+    required Usuario usuarioLogado, // Trava de segurança
   }) async {
-    // 1. Atualiza status
+    if (usuarioLogado.perfil != Perfil.administrador) {
+      throw Exception("Acesso Negado: Apenas administradores podem designar técnicos.");
+    }
+
     await _chamadoRepository.atualizarStatus(chamado.id, StatusChamado.emExecucao);
 
-    // 2. Gera a OS
     final novaOS = OrdemServico(
       id: chamado.id,
       ativoId: chamado.ativo.id,
@@ -56,7 +65,6 @@ class ChamadoDomainServices {
     );
     await _osRepository.salvar(novaOS);
 
-    // 3. Notifica o solicitante
     await _enviarNotificacao(
       "Chamado Aprovado",
       "O chamado ${chamado.id} foi aprovado e a manutenção iniciada.",
@@ -73,7 +81,6 @@ class ChamadoDomainServices {
     DateTime? dataInicio,
     DateTime? dataFim,
   }) async {
-    
     final osFinalizada = ordem.copyWith(
       status: StatusOS.concluida,
       relatotecnico: relato, 
@@ -84,8 +91,8 @@ class ChamadoDomainServices {
     );
     
     await _osRepository.salvar(osFinalizada);
+    await _chamadoRepository.atualizarStatus(ordem.id, StatusChamado.concluido);
 
-    // Notifica o solicitante que a manutenção foi concluída
     await _enviarNotificacao(
       "Manutenção Finalizada",
       "A ordem de serviço para o chamado ${ordem.id} foi concluída com sucesso.",

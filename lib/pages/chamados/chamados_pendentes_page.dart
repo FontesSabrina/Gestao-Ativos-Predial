@@ -5,7 +5,7 @@ import '../../domain/entities/usuario.dart';
 import '../../domain/repositories/chamado_repository.dart';
 import 'chamado_aprovacao_page.dart';
 import 'abrir_chamado_page.dart';
-import '../manutencao/acompanhamento_realtime_page.dart'; 
+import 'acompanhamento_realtime_page.dart'; 
 
 class ChamadosPendentesPage extends StatefulWidget {
   final Usuario usuario;
@@ -136,7 +136,12 @@ class _ChamadosPendentesPageState extends State<ChamadosPendentesPage> {
         trailing: const Icon(Icons.chevron_right, color: azulFixo),
         onTap: () => Navigator.push(
           context, 
-          MaterialPageRoute(builder: (_) => ChamadoAprovacaoPage(chamado: c))
+          MaterialPageRoute(
+            builder: (_) => ChamadoAprovacaoPage(
+              chamado: c, 
+              usuarioLogado: widget.usuario // AQUI FOI A CORREÇÃO!
+            ),
+          )
         ).then((_) => _atualizarLista()),
       ),
     );

@@ -10,15 +10,15 @@ import 'pages/ativos/ativo_form_page.dart';
 import 'pages/estoque/estoque_page.dart';
 import 'pages/chamados/chamados_pendentes_page.dart';
 import 'pages/chamados/abrir_chamado_page.dart';
-import 'pages/manutencao/manutencoes_page.dart';
-import 'pages/ordem_servico/ordens_servico_page.dart';
-import 'pages/manutencao/planejamento_preventivas_page.dart'; 
-import '../pages/manutencao/minhas_ordens_page.dart';
+import 'pages/manutencao/ordens/ordens_servico_page.dart';
+import 'pages/planejamento/planejamento_preventivas_page.dart'; 
+import 'pages/manutencao/minhas_ordens_page.dart';
 import 'pages/chamados/meus_chamados_page.dart';
-import 'pages/manutencao/consumo_pecas_page.dart';
+import 'pages/estoque/consumo_pecas_page.dart';
 import 'pages/usuarios/lista_usuarios_page.dart';
 import 'pages/usuarios/cadastro_usuario_page.dart'; 
-import 'pages/ativos/cadastro_ambiente_page.dart';
+import 'pages/ambiente/cadastro_ambiente_page.dart';
+import 'pages/ambiente/lista_ambientes_page.dart';
 import 'pages/notificacao/notificacoes_page.dart';
 import 'pages/indicadores/indicadores_page.dart';
 
@@ -45,6 +45,7 @@ class AppRoutes {
   static const String usuarios = '/usuarios'; 
   static const String cadastroUsuario = '/cadastro-usuario';
   static const String cadastroAmbiente = '/cadastro-ambiente';
+  static const String listaAmbientes = '/lista-ambientes'; 
   static const String notificacoes = '/notificacoes';
   static const String manutencoes = '/manutencoes';
 
@@ -108,7 +109,7 @@ class AppRoutes {
       usuarios: (context) => const ListaUsuariosPage(),
       cadastroUsuario: (context) => const CadastroUsuarioPage(),
       cadastroAmbiente: (context) => const CadastroAmbientePage(),
-      manutencoes: (context) => const ManutencoesPage(),
+      listaAmbientes: (context) => const ListaAmbientesPage(),
     };
   }
 }

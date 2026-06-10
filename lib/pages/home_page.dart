@@ -7,7 +7,7 @@ import '../../domain/repositories/chamado_repository.dart';
 import '../../domain/repositories/notificacao_repository.dart';
 import '../../domain/repositories/estoque_repository.dart';
 import '../../pages/usuarios/cadastro_usuario_page.dart';
-import '../../pages/ativos/cadastro_ambiente_page.dart';
+import 'ambiente/lista_ambientes_page.dart';
 import '../../pages/manutencao/minhas_ordens_page.dart';
 import '../../core/theme/theme_controller.dart';
 import '../../main.dart';
@@ -76,18 +76,17 @@ class _HomePageState extends State<HomePage> {
     bool isAdmin = widget.usuario.perfil == Perfil.administrador;
     bool isTecnico = widget.usuario.perfil == Perfil.tecnicoResponsavel;
     bool isSolicitante = widget.usuario.perfil == Perfil.solicitante;
-    bool isAuditor = widget.usuario.perfil == Perfil.auditor;
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('AURA', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+        // CORREÇÃO: Título "AURA" agora com a cor azul (primaryColor)
+        title: const Text('AURA', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: primaryColor)),
         centerTitle: true,
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
         actions: [
-          // Botões de Acessibilidade
           IconButton(
             icon: const Icon(Icons.remove_circle_outline),
             tooltip: "Diminuir fonte",
@@ -98,12 +97,10 @@ class _HomePageState extends State<HomePage> {
             tooltip: "Aumentar fonte",
             onPressed: () => setState(() => fontScaleNotifier.value = (fontScaleNotifier.value + 0.1).clamp(0.8, 2.0)),
           ),
-          // Botão de Tema
           IconButton(
             icon: Icon(GetIt.I<ThemeController>().themeMode == ThemeMode.light ? Icons.dark_mode : Icons.light_mode),
             onPressed: () => setState(() => GetIt.I<ThemeController>().toggleTheme()),
           ),
-          // Notificações
           IconButton(
             icon: Stack(
               children: [
@@ -121,7 +118,6 @@ class _HomePageState extends State<HomePage> {
             ),
             onPressed: () => Navigator.pushNamed(context, '/notificacoes', arguments: widget.usuario).then((_) => _carregarDadosDoSistema()),
           ),
-          // Sair
           IconButton(
             icon: const Icon(Icons.power_settings_new, color: Colors.redAccent),
             onPressed: () => Navigator.pushReplacementNamed(context, '/login'),
@@ -130,11 +126,11 @@ class _HomePageState extends State<HomePage> {
       ),
       body: _carregando
           ? const Center(child: CircularProgressIndicator(color: primaryColor))
-          : _buildConteudoPrincipal(pendentes, isAdmin, isTecnico, isSolicitante, isAuditor),
+          : _buildConteudoPrincipal(pendentes, isAdmin, isTecnico, isSolicitante),
     );
   }
 
-  Widget _buildConteudoPrincipal(int pendentes, bool isAdmin, bool isTecnico, bool isSolicitante, bool isAuditor) {
+  Widget _buildConteudoPrincipal(int pendentes, bool isAdmin, bool isTecnico, bool isSolicitante) {
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 800),
@@ -172,10 +168,8 @@ class _HomePageState extends State<HomePage> {
                 _buildCardServico("Estoque e Peças", "Níveis mínimos e fornecedores", Icons.inventory_2_outlined, Colors.orange.shade700, Colors.orange.shade50, () => Navigator.pushNamed(context, '/estoque', arguments: widget.usuario).then((_) => _carregarDadosDoSistema()), badgeCount: _estoqueCriticoCount),
                 _buildCardServico("Indicadores e BI", "Custo e eficiência", Icons.insights_rounded, Colors.purple.shade700, Colors.purple.shade50, () => Navigator.pushNamed(context, '/indicadores', arguments: widget.usuario)),
                 _buildCardServico("Cadastro de Usuários", "Gerenciar acessos", Icons.person_add_alt_1, Colors.lime.shade800, Colors.lime.shade50, () => Navigator.pushNamed(context, '/usuarios', arguments: widget.usuario)),
-                                _buildCardServico("Cadastrar Ambiente", "Adicionar locais", Icons.add_location_alt, Colors.pink.shade700, Colors.pink.shade50, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CadastroAmbientePage()))),
+                _buildCardServico("Ambientes", "Lista de locais e cadastros", Icons.list_alt, Colors.pink.shade700, Colors.pink.shade50, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ListaAmbientesPage()))),
               ],
-
-
               
               if (isTecnico) ...[
                 _buildCardServico("Minhas Ordens", "Tarefas atribuídas a você", Icons.assignment_ind_rounded, Colors.indigo.shade700, Colors.indigo.shade50, () => Navigator.push(context, MaterialPageRoute(builder: (_) => MinhasOrdensPage(usuarioLogado: widget.usuario)))),
@@ -186,11 +180,6 @@ class _HomePageState extends State<HomePage> {
               if (isSolicitante) ...[
                 _buildCardServico("Abrir Chamado", "Reportar problemas", Icons.add_circle_outline, Colors.blue.shade700, Colors.blue.shade50, () => Navigator.pushNamed(context, '/abrir-chamado', arguments: widget.usuario)),
                 _buildCardServico("Meus Chamados", "Acompanhe seus pedidos", Icons.list_alt, Colors.green.shade700, Colors.green.shade50, () => Navigator.pushNamed(context, '/meus-chamados', arguments: widget.usuario)),
-              ],
-
-              if (isAuditor) ...[
-                _buildCardServico("Relatórios Gerais", "Auditoria de sistemas", Icons.analytics_outlined, Colors.purple.shade700, Colors.purple.shade50, () => Navigator.pushNamed(context, '/relatorios', arguments: widget.usuario)),
-                _buildCardServico("Consulta de Estoque", "Verificar auditoria", Icons.inventory_2_outlined, Colors.orange.shade700, Colors.orange.shade50, () => Navigator.pushNamed(context, '/estoque', arguments: widget.usuario)),
               ],
             ],
           ),

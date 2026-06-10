@@ -9,7 +9,6 @@ class UsuarioRepositoryMemory extends RepositoryMemoryBase<Usuario> implements U
     Usuario(id: '1', nome: 'Sabrina', email: 'sabrina@aura.com', senha: 'admin123', perfil: Perfil.administrador),
     Usuario(id: '2', nome: 'João', email: 'joao@aura.com', senha: 'tech123', perfil: Perfil.tecnicoResponsavel),
     Usuario(id: '3', nome: 'Maria', email: 'maria@aura.com', senha: 'user123', perfil: Perfil.solicitante),
-    Usuario(id: '4', nome: 'Alexandre', email: 'alexandre@aura.com', senha: 'audit123', perfil: Perfil.auditor),
   ];
 
   @override

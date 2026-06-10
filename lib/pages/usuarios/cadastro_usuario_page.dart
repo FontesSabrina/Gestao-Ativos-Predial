@@ -21,7 +21,7 @@ class _CadastroUsuarioPageState extends State<CadastroUsuarioPage> {
   final _confirmarSenhaController = TextEditingController();
   
   Perfil _perfilSelecionado = Perfil.solicitante;
-  static const Color azulFixo = Color(0xFF1A237E); // Padrão de cor do sistema
+  static const Color azulFixo = Color(0xFF1A237E);
 
   @override
   void initState() {
@@ -29,6 +29,7 @@ class _CadastroUsuarioPageState extends State<CadastroUsuarioPage> {
     if (widget.usuario != null) {
       _nomeController.text = widget.usuario!.nome;
       _emailController.text = widget.usuario!.email;
+      // Removida qualquer verificação que envolvesse o perfil de auditor
       _perfilSelecionado = widget.usuario!.perfil;
     }
   }
@@ -45,7 +46,7 @@ class _CadastroUsuarioPageState extends State<CadastroUsuarioPage> {
         ),
         backgroundColor: azulFixo,
         centerTitle: true,
-        iconTheme: const IconThemeData(color: Colors.white), // Seta branca
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -57,7 +58,6 @@ class _CadastroUsuarioPageState extends State<CadastroUsuarioPage> {
               decoration: BoxDecoration(
                 color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(20),
-                // Borda para manter o padrão visual do cadastro de ambiente
                 border: Border.all(color: Colors.grey.withOpacity(0.5), width: 1.5),
               ),
               child: Form(
@@ -76,6 +76,7 @@ class _CadastroUsuarioPageState extends State<CadastroUsuarioPage> {
                         prefixIcon: Icon(Icons.admin_panel_settings, color: azulFixo),
                         border: OutlineInputBorder()
                       ),
+                      // Agora usamos diretamente o Enum, que só contém os perfis válidos
                       items: Perfil.values.map((p) => DropdownMenuItem(
                         value: p, 
                         child: Text(p.name.toUpperCase())

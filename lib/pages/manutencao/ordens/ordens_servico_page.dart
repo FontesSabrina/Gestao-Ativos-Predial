@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import '../../../domain/entities/ordem_servico.dart';
-import '../../../domain/entities/usuario.dart';
-import '../../../domain/entities/ativo.dart';
-import '../../../domain/services/ordem_servico_domain_services.dart';
-import '../../../domain/repositories/ativo_repository.dart';
+import '../../../../domain/entities/ordem_servico.dart';
+import '../../../../domain/entities/usuario.dart';
+import '../../../../domain/entities/ativo.dart';
+import '../../../../domain/services/ordem_servico_domain_services.dart';
+import '../../../../domain/repositories/ativo_repository.dart';
 import 'ordem_servico_execucao_page.dart';
 
 class OrdensServicoPage extends StatefulWidget {
@@ -59,6 +59,9 @@ class _OrdensServicoPageState extends State<OrdensServicoPage> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             }
+            if (snapshot.hasError) {
+              return Center(child: Text("Erro ao carregar ordens: ${snapshot.error}"));
+            }
             final ordens = snapshot.data ?? [];
             return TabBarView(
               children: [
@@ -94,6 +97,7 @@ class _ListaOSState extends State<_ListaOS> with AutomaticKeepAliveClientMixin {
     super.build(context);
     final filtradas = widget.ordens.where((os) => os.status == widget.status).toList();
 
+    // Centraliza o texto quando vazio
     if (filtradas.isEmpty) {
       return Center(
         child: Text(
@@ -103,13 +107,19 @@ class _ListaOSState extends State<_ListaOS> with AutomaticKeepAliveClientMixin {
       );
     }
 
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      itemCount: filtradas.length,
-      itemBuilder: (context, index) => _OsCard(
-        os: filtradas[index],
-        usuario: widget.usuario,
-        onRefresh: widget.onRefresh,
+    // Centraliza a lista em telas grandes
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 800),
+        child: ListView.builder(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          itemCount: filtradas.length,
+          itemBuilder: (context, index) => _OsCard(
+            os: filtradas[index],
+            usuario: widget.usuario,
+            onRefresh: widget.onRefresh,
+          ),
+        ),
       ),
     );
   }

@@ -25,6 +25,7 @@ class _AbrirChamadoPageState extends State<AbrirChamadoPage> {
   String _prioridadeSelecionada = 'Média';
   TipoManutencao _tipoSelecionado = TipoManutencao.corretiva;
 
+  // Cor padrão do projeto
   static const Color azulFixo = Color(0xFF1A237E);
 
   @override
@@ -76,13 +77,14 @@ class _AbrirChamadoPageState extends State<AbrirChamadoPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF121212),
       appBar: AppBar(
         title: const Text('Abrir Chamado', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
         backgroundColor: azulFixo,
-        iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -90,41 +92,43 @@ class _AbrirChamadoPageState extends State<AbrirChamadoPage> {
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 600),
             child: Container(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(32),
               decoration: BoxDecoration(
-                color: const Color(0xFF1E1E1E),
+                color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.white24, width: 1.5),
+                boxShadow: [
+                  BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10, spreadRadius: 2)
+                ],
               ),
               child: Form(
                 key: _formKey,
                 child: Column(
                   children: [
                     _buildDropdown('Ativo', _idAtivoSelecionado, Icons.computer, 
-                      _ativos.map((a) => DropdownMenuItem(value: a.id, child: Text(a.nome, style: const TextStyle(color: Colors.white)))).toList(),
-                      (val) => setState(() => _idAtivoSelecionado = val)),
+                      _ativos.map((a) => DropdownMenuItem(value: a.id, child: Text(a.nome))).toList(),
+                      (val) => setState(() => _idAtivoSelecionado = val), isDark),
                     const SizedBox(height: 16),
                     _buildDropdown('Prioridade', _prioridadeSelecionada, Icons.priority_high, 
-                      ['Baixa', 'Média', 'Alta'].map((p) => DropdownMenuItem(value: p, child: Text(p, style: const TextStyle(color: Colors.white)))).toList(),
-                      (val) => setState(() => _prioridadeSelecionada = val!)),
+                      ['Baixa', 'Média', 'Alta'].map((p) => DropdownMenuItem(value: p, child: Text(p))).toList(),
+                      (val) => setState(() => _prioridadeSelecionada = val!), isDark),
                     const SizedBox(height: 16),
                     _buildDropdown('Tipo de Manutenção', _tipoSelecionado, Icons.build_circle_outlined, 
-                      TipoManutencao.values.map((t) => DropdownMenuItem(value: t, child: Text(t.name.toUpperCase(), style: const TextStyle(color: Colors.white)))).toList(),
-                      (val) => setState(() => _tipoSelecionado = val!)),
+                      TipoManutencao.values.map((t) => DropdownMenuItem(value: t, child: Text(t.name.toUpperCase()))).toList(),
+                      (val) => setState(() => _tipoSelecionado = val!), isDark),
                     const SizedBox(height: 16),
-                    _buildTextField(_descricaoController, "Descrição da Falha", Icons.description, maxLines: 4),
-                    const SizedBox(height: 24),
+                    _buildTextField(_descricaoController, "Descrição da Falha", Icons.description, isDark, maxLines: 4),
+                    const SizedBox(height: 32),
                     SizedBox(
-                      height: 50,
+                      height: 55,
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: _enviarChamado,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: azulFixo,
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         ),
-                        child: const Text('SALVAR CHAMADO', style: TextStyle(fontWeight: FontWeight.bold)),
+                        onPressed: _enviarChamado,
+                        child: const Text('SALVAR', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                       ),
                     ),
                   ],
@@ -137,35 +141,32 @@ class _AbrirChamadoPageState extends State<AbrirChamadoPage> {
     );
   }
 
-  Widget _buildDropdown(String label, dynamic value, IconData icon, List<DropdownMenuItem> items, Function(dynamic) onChanged) {
+  Widget _buildDropdown(String label, dynamic value, IconData icon, List<DropdownMenuItem> items, Function(dynamic) onChanged, bool isDark) {
     return DropdownButtonFormField(
       value: value,
-      dropdownColor: const Color(0xFF1E1E1E),
-      style: const TextStyle(color: Colors.white),
-      decoration: _inputDecoration(label, icon),
+      decoration: _inputDecoration(label, icon, isDark),
       items: items,
       onChanged: onChanged,
       validator: (val) => val == null ? 'Campo obrigatório' : null,
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String label, IconData icon, {int maxLines = 1}) {
+  Widget _buildTextField(TextEditingController controller, String label, IconData icon, bool isDark, {int maxLines = 1}) {
     return TextFormField(
       controller: controller,
       maxLines: maxLines,
-      style: const TextStyle(color: Colors.white),
-      decoration: _inputDecoration(label, icon),
+      decoration: _inputDecoration(label, icon, isDark),
       validator: (val) => val!.isEmpty ? 'Campo obrigatório' : null,
     );
   }
 
-  InputDecoration _inputDecoration(String label, IconData icon) {
+  InputDecoration _inputDecoration(String label, IconData icon, bool isDark) {
     return InputDecoration(
       labelText: label,
-      labelStyle: const TextStyle(color: Colors.white70),
       prefixIcon: Icon(icon, color: azulFixo),
-      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)),
-      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: azulFixo, width: 2)),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      filled: true,
+      fillColor: isDark ? Colors.white10 : Colors.grey.shade50,
     );
   }
 }

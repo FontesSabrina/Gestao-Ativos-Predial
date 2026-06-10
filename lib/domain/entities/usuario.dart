@@ -1,7 +1,8 @@
 import 'package:meta/meta.dart';
 
-// Presumindo que Perfil seja um enum ou outra classe que você tenha definido
-enum Perfil { administrador, tecnicoResponsavel, solicitante, auditor }
+// Removi 'auditor' do enum. 
+// ATENÇÃO: Como usamos .index, manter a ordem dos que restaram é essencial.
+enum Perfil { administrador, tecnicoResponsavel, solicitante }
 
 @immutable
 class Usuario {
@@ -19,7 +20,6 @@ class Usuario {
     required this.perfil,
   });
 
-  // Métodos de igualdade que você já tinha (ótimos para comparar usuários no app)
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -35,22 +35,28 @@ class Usuario {
       'id': id,
       'nome': nome,
       'email': email,
-      'senha': senha, // Lembre-se: idealmente, nunca salve a senha em texto puro!
-      'perfil': perfil.index,
+      'senha': senha,
+      'perfil': perfil.index, // Salva o índice atual (0, 1, 2)
     };
   }
 
   factory Usuario.fromMap(Map<String, dynamic> map) {
+    // Pegamos o índice salvo. Se por acaso não existir, o '?? 0' garante o perfil padrão.
+    final index = map['perfil'] ?? 0;
+    
+    // Proteção para evitar erro caso o valor salvo fosse '3' (Auditor)
+    // Se for maior que o tamanho da lista, volta para o último perfil válido (solicitante)
+    final perfilValido = index < Perfil.values.length ? index : Perfil.values.length - 1;
+
     return Usuario(
       id: map['id'],
       nome: map['nome'],
       email: map['email'],
       senha: map['senha'],
-      perfil: Perfil.values[map['perfil'] ?? 0],
+      perfil: Perfil.values[perfilValido],
     );
   }
 
-  // Método copyWith para seguir o padrão de imutabilidade
   Usuario copyWith({
     String? id,
     String? nome,
