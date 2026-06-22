@@ -69,6 +69,7 @@ Habilitar o suporte Windows (se necessário) e rodar:
 Bash
 flutter config --enable-windows-desktop
 flutter run -d windows
+
 🧑‍💻 Autores (IFSUDESTEMG - Campus Muriaé)
 Trabalho desenvolvido para o curso de Gestão da Tecnologia da Informação:
 
@@ -79,7 +80,8 @@ Sabrina Caetano Fontes — Desenvolvedora do Projeto
 Developed as part of the GTI Academic Projects ecosystem. 🚀
 
 
-Pode salvar esse arquivo por cima do outro. Para atualizar no GitHub sem esses códigos esquisitos, rode no terminal:
+Pode salvar esse arquivo por cima do outro.
+Para atualizar no GitHub sem esses códigos esquisitos, rode no terminal:
 
 ```bash
 git add README.md
