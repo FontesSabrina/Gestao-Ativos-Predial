@@ -6,10 +6,8 @@ class EstoqueDomainServices {
 
   EstoqueDomainServices(this._repository);
 
-  // Padronizado para buscarTodos()
   Future<List<ItemEstoque>> buscarTodos() async => await _repository.buscarTodos();
 
-  // Regra de Negócio: Consumo com segurança
   Future<void> consumirItem(String idItem, int quantidade) async {
     final item = await _repository.buscarPorId(idItem);
     
@@ -26,7 +24,6 @@ class EstoqueDomainServices {
     await _repository.atualizarQuantidade(idItem, novaQuantidade);
   }
 
-  // Padronizado para refletir o critério de busca
   Future<List<ItemEstoque>> buscarItensCriticos() async {
     return await _repository.buscarItensAbaixoDoMinimo();
   }

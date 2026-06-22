@@ -81,7 +81,6 @@ class MeusChamadosPage extends StatelessWidget {
   }
 
   Widget _buildStatusBadge(StatusChamado status) {
-    // Definimos cores fixas para os estados para manter a organização
     Color color = status == StatusChamado.aberto ? Colors.blue : Colors.green;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),

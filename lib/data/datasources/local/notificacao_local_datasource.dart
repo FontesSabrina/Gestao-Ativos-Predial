@@ -6,7 +6,7 @@ class NotificacaoLocalDataSource {
 
   NotificacaoLocalDataSource(this._db);
 
-  // Método para salvar (Inserir)
+
   Future<void> salvar(Notificacao not) async {
     await _db.insert(
       'notificacoes', 
@@ -18,11 +18,11 @@ class NotificacaoLocalDataSource {
         'lida': not.lida ? 1 : 0,
         'usuarioId': not.usuarioId,
       },
-      conflictAlgorithm: ConflictAlgorithm.replace, // Garante que, se o ID existir, ele sobrescreve
+      conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 
-  // Método para buscar por usuário
+
   Future<List<Notificacao>> buscarPorUsuario(String usuarioId) async {
     final results = await _db.query(
       'notificacoes', 
@@ -41,7 +41,7 @@ class NotificacaoLocalDataSource {
     )).toList();
   }
 
-  // Método para marcar como lida
+
   Future<void> marcarComoLida(String id) async {
     await _db.update(
       'notificacoes', 
@@ -51,7 +51,7 @@ class NotificacaoLocalDataSource {
     );
   }
 
-  // BÔNUS: Adicionei este método para você conseguir limpar notificações antigas
+
   Future<void> excluir(String id) async {
     await _db.delete('notificacoes', where: 'id = ?', whereArgs: [id]);
   }

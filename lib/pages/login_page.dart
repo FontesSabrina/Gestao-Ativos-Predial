@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
+import '../../../routes.dart';
 import '../domain/services/usuario_domain_services.dart';
 import '../domain/repositories/usuario_repository.dart';
 import 'home_page.dart';
@@ -16,7 +17,6 @@ class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _senhaController = TextEditingController();
   
-  // Estado para controlar a visibilidade da senha
   bool _senhaVisivel = false;
   
   late final UsuarioDomainServices _service;
@@ -27,6 +27,13 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
     final repo = GetIt.I<UsuarioRepository>();
     _service = UsuarioDomainServices(repo);
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _senhaController.dispose();
+    super.dispose();
   }
 
   void _fazerLogin() async {
@@ -43,7 +50,10 @@ class _LoginPageState extends State<LoginPage> {
         if (mounted) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => HomePage(usuario: usuario)),
+            MaterialPageRoute(
+              settings: const RouteSettings(name: AppRoutes.home),
+              builder: (context) => HomePage(usuario: usuario),
+            ),
           );
         }
       } else {
@@ -111,7 +121,6 @@ class _LoginPageState extends State<LoginPage> {
                   _buildTextField(controller: _emailController, label: 'Usuário / E-mail', icon: Icons.person_pin_rounded),
                   const SizedBox(height: 20),
                   
-                  // Campo de senha atualizado
                   _buildTextField(controller: _senhaController, label: 'Senha', icon: Icons.vpn_key_rounded, isPassword: true),
                   
                   const SizedBox(height: 40),
@@ -143,7 +152,6 @@ class _LoginPageState extends State<LoginPage> {
         labelText: label,
         labelStyle: const TextStyle(color: Colors.black45, fontWeight: FontWeight.w600),
         prefixIcon: Icon(icon, color: Colors.indigo[900]),
-        // Adicionando o ícone do olho apenas se for campo de senha
         suffixIcon: isPassword
             ? IconButton(
                 icon: Icon(_senhaVisivel ? Icons.visibility : Icons.visibility_off, color: Colors.indigo[900]),

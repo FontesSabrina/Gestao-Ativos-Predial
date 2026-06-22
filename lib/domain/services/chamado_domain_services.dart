@@ -30,7 +30,6 @@ class ChamadoDomainServices {
   }
 
   Future<List<Chamado>> buscarTodos() async => await _chamadoRepository.buscarTodos();
-
   Future<void> registrarChamado(Chamado chamado) async => await _chamadoRepository.salvar(chamado);
 
   Future<void> cancelarChamado(Chamado chamado) async {
@@ -45,7 +44,7 @@ class ChamadoDomainServices {
   Future<void> aprovarChamadoEGerarOS({
     required Chamado chamado,
     required Usuario tecnico,
-    required Usuario usuarioLogado, // Trava de segurança
+    required Usuario usuarioLogado,
   }) async {
     if (usuarioLogado.perfil != Perfil.administrador) {
       throw Exception("Acesso Negado: Apenas administradores podem designar técnicos.");

@@ -2,27 +2,39 @@ import 'package:sqflite/sqflite.dart';
 import '../../models/ordem_servico_model.dart';
 
 class OrdemServicoLocalDataSource {
-  final Database database;
+  final Database _db;
 
-  OrdemServicoLocalDataSource(this.database);
+  OrdemServicoLocalDataSource(this._db);
 
   Future<void> salvar(OrdemServicoModel model) async {
-    await database.insert(
-      'ordens_servico',
-      model.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    try {
+      await _db.insert(
+        'ordens_servico',
+        model.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    } catch (e) {
+      throw Exception("Erro ao salvar ordem de serviço: $e");
+    }
   }
 
   Future<List<Map<String, dynamic>>> buscarTodas() async {
-    return await database.query('ordens_servico');
+    try {
+      return await _db.query('ordens_servico');
+    } catch (e) {
+      throw Exception("Erro ao buscar todas as ordens de serviço: $e");
+    }
   }
 
   Future<List<Map<String, dynamic>>> buscarPorStatus(int statusIndex) async {
-    return await database.query(
-      'ordens_servico',
-      where: 'status = ?',
-      whereArgs: [statusIndex],
-    );
+    try {
+      return await _db.query(
+        'ordens_servico',
+        where: 'status = ?',
+        whereArgs: [statusIndex],
+      );
+    } catch (e) {
+      throw Exception("Erro ao buscar ordens de serviço por status: $e");
+    }
   }
 }

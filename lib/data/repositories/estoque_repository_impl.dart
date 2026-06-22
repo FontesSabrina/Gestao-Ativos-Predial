@@ -14,8 +14,6 @@ class EstoqueRepositoryImpl implements EstoqueRepository {
 
   @override
   Future<ItemEstoque?> buscarPorId(String id) async {
-    // Agora que adicionamos buscarPorId no DataSource, 
-    // não precisamos mais buscar tudo para filtrar manualmente!
     return await localDataSource.buscarPorId(id);
   }
 

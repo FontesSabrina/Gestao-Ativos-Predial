@@ -139,7 +139,7 @@ class _ChamadosPendentesPageState extends State<ChamadosPendentesPage> {
           MaterialPageRoute(
             builder: (_) => ChamadoAprovacaoPage(
               chamado: c, 
-              usuarioLogado: widget.usuario // AQUI FOI A CORREÇÃO!
+              usuarioLogado: widget.usuario
             ),
           )
         ).then((_) => _atualizarLista()),

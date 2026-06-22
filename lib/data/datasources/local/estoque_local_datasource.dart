@@ -1,15 +1,17 @@
 import 'package:sqflite/sqflite.dart';
-import 'database_helper.dart';
+import '../../models/item_estoque_model.dart';
 import '../../../domain/entities/item_estoque.dart';
 
 class EstoqueLocalDataSource {
+  final Database _db;
   final String _tableName = 'estoque';
+
+  EstoqueLocalDataSource(this._db);
 
   Future<List<ItemEstoque>> buscarTodos() async {
     try {
-      final db = await DatabaseHelper.instance.database;
-      final maps = await db.query(_tableName);
-      return maps.map((map) => ItemEstoque.fromMap(map)).toList();
+      final maps = await _db.query(_tableName);
+      return maps.map((map) => ItemEstoqueModel.fromMap(map)).toList();
     } catch (e) {
       throw Exception("Erro ao buscar todos os itens do estoque: $e");
     }
@@ -17,10 +19,9 @@ class EstoqueLocalDataSource {
 
   Future<ItemEstoque?> buscarPorId(String id) async {
     try {
-      final db = await DatabaseHelper.instance.database;
-      final maps = await db.query(_tableName, where: 'id = ?', whereArgs: [id]);
+      final maps = await _db.query(_tableName, where: 'id = ?', whereArgs: [id]);
       if (maps.isNotEmpty) {
-        return ItemEstoque.fromMap(maps.first);
+        return ItemEstoqueModel.fromMap(maps.first);
       }
       return null;
     } catch (e) {
@@ -30,10 +31,19 @@ class EstoqueLocalDataSource {
 
   Future<void> salvar(ItemEstoque item) async {
     try {
-      final db = await DatabaseHelper.instance.database;
-      await db.insert(
+      final modelo = ItemEstoqueModel(
+        id: item.id,
+        nome: item.nome,
+        quantidade: item.quantidade,
+        nivelMinimo: item.nivelMinimo,
+        unidadeMedida: item.unidadeMedida,
+        fornecedor: item.fornecedor,
+        precoUnitario: item.precoUnitario,
+      );
+
+      await _db.insert(
         _tableName, 
-        item.toMap(), 
+        modelo.toMap(), 
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
     } catch (e) {
@@ -43,8 +53,7 @@ class EstoqueLocalDataSource {
 
   Future<void> atualizarQuantidade(String id, int novaQuantidade) async {
     try {
-      final db = await DatabaseHelper.instance.database;
-      await db.update(
+      await _db.update(
         _tableName,
         {'quantidade': novaQuantidade},
         where: 'id = ?',
@@ -57,10 +66,19 @@ class EstoqueLocalDataSource {
 
   Future<void> atualizarItem(ItemEstoque item) async {
     try {
-      final db = await DatabaseHelper.instance.database;
-      await db.update(
+      final modelo = ItemEstoqueModel(
+        id: item.id,
+        nome: item.nome,
+        quantidade: item.quantidade,
+        nivelMinimo: item.nivelMinimo,
+        unidadeMedida: item.unidadeMedida,
+        fornecedor: item.fornecedor,
+        precoUnitario: item.precoUnitario,
+      );
+
+      await _db.update(
         _tableName,
-        item.toMap(),
+        modelo.toMap(),
         where: 'id = ?',
         whereArgs: [item.id],
       );
@@ -71,8 +89,7 @@ class EstoqueLocalDataSource {
 
   Future<void> excluir(String id) async {
     try {
-      final db = await DatabaseHelper.instance.database;
-      await db.delete(_tableName, where: 'id = ?', whereArgs: [id]);
+      await _db.delete(_tableName, where: 'id = ?', whereArgs: [id]);
     } catch (e) {
       throw Exception("Erro ao excluir item do estoque com ID $id: $e");
     }

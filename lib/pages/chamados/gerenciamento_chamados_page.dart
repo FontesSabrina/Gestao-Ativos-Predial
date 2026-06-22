@@ -10,13 +10,10 @@ class GerenciamentoChamadosPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Roteamento baseado no perfil do usuário
-    // Mantemos a lógica original para garantir a experiência correta por perfil
     if (usuario.perfil == Perfil.administrador) {
       return ChamadosPendentesPage(usuario: usuario);
     } 
     
-    // Usuários comuns ou técnicos são direcionados para a abertura de chamado
     return AbrirChamadoPage(usuario: usuario);
   }
 }

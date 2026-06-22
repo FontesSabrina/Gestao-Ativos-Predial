@@ -94,7 +94,7 @@ class _AtivoFormPageState extends State<AtivoFormPage> {
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Ativo salvo com sucesso!"), backgroundColor: Colors.green),
+            const SnackBar(content: Text("Ativo saved successfully!"), backgroundColor: Colors.green),
           );
           Navigator.pop(context, true);
         }
@@ -118,7 +118,6 @@ class _AtivoFormPageState extends State<AtivoFormPage> {
             style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         backgroundColor: azulFixo,
         centerTitle: true,
-        // Adicionado iconTheme para garantir que a seta de voltar seja branca
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Center(
@@ -193,11 +192,14 @@ class _AtivoFormPageState extends State<AtivoFormPage> {
 
   Widget _buildField(TextEditingController controller, String label, IconData icon, bool isDark) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: TextFormField(
-        controller: controller,
-        decoration: _inputDecoration(label, icon, isDark),
-        validator: (value) => value == null || value.isEmpty ? 'Informe o $label' : null,
+      padding: const EdgeInsets.all(0),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        child: TextFormField(
+          controller: controller,
+          decoration: _inputDecoration(label, icon, isDark),
+          validator: (value) => value == null || value.isEmpty ? 'Informe o $label' : null,
+        ),
       ),
     );
   }

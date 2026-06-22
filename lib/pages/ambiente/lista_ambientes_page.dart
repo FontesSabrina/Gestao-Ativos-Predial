@@ -25,7 +25,7 @@ class _ListaAmbientesPageState extends State<ListaAmbientesPage> {
     _carregar();
   }
 
-  // Carrega os dados do repositório
+
   Future<void> _carregar() async {
     final lista = await _ambienteRepository.buscarTodos();
     if (mounted) {
@@ -97,9 +97,8 @@ class _ListaAmbientesPageState extends State<ListaAmbientesPage> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: azulFixo,
         onPressed: () async {
-          // Navega para cadastro (sem passar ambiente)
           await Navigator.push(context, MaterialPageRoute(builder: (_) => const CadastroAmbientePage()));
-          _carregar(); // Atualiza a lista ao voltar
+          _carregar();
         },
         child: const Icon(Icons.add, color: Colors.white),
       ),
@@ -140,9 +139,8 @@ class _ListaAmbientesPageState extends State<ListaAmbientesPage> {
                           onPressed: () => _excluir(ambiente),
                         ),
                         onTap: () async {
-                          // Navega para edição (passando o ambiente)
                           await Navigator.push(context, MaterialPageRoute(builder: (_) => CadastroAmbientePage(ambiente: ambiente)));
-                          _carregar(); // Recarrega a lista para mostrar a edição
+                          _carregar();
                         },
                       ),
                     );

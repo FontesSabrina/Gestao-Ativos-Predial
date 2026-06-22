@@ -42,7 +42,6 @@ class ChamadoRepositoryMemory extends RepositoryMemoryBase<Chamado> implements C
   @override
   Future<Chamado?> buscarPorId(String id) async {
     await connect();
-    // Uso do cast e orElse para evitar erro caso não encontre
     return dataMemory.cast<Chamado?>().firstWhere(
       (c) => c?.id == id, 
       orElse: () => null
@@ -71,8 +70,6 @@ class ChamadoRepositoryMemory extends RepositoryMemoryBase<Chamado> implements C
     await connect();
     final index = dataMemory.indexWhere((c) => c.id == idChamado);
     if (index != -1) {
-      // Usando o copyWith (se você tiver implementado na sua entidade) 
-      // torna o código muito mais limpo que instanciar um novo objeto manualmente
       dataMemory[index] = dataMemory[index].copyWith(status: novoStatus);
     }
   }

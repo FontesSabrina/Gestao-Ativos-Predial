@@ -17,7 +17,7 @@ class DatabaseHelper {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
     
-    // Log para confirmar o caminho do banco
+  
     print("Iniciando banco de dados em: $path");
     
     return await openDatabase(

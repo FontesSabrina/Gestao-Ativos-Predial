@@ -9,7 +9,6 @@ class AtivoDomainServices {
   Future<List<Ativo>> buscarTodos() async => await _repository.buscarTodos();
 
   Future<void> salvar(Ativo ativo) async {
-    // Regra: Não permitir salvar ativo sem código de patrimônio (exemplo de validação)
     await _repository.salvar(ativo);
   }
 

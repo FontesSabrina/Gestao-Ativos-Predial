@@ -6,19 +6,18 @@ class Notificacao {
   final String titulo;
   final String mensagem;
   final DateTime dataCriacao;
-  final bool lida;
-  final String usuarioId; // Para saber para qual usuário essa notificação pertence
+  final bool lida; 
+  final String usuarioId; 
 
   const Notificacao({
     required this.id,
     required this.titulo,
     required this.mensagem,
     required this.dataCriacao,
-    this.lida = false,
+    this.lida = false, 
     required this.usuarioId,
   });
 
-  // Método para facilitar a marcação como lida
   Notificacao copyWith({bool? lida}) {
     return Notificacao(
       id: id,

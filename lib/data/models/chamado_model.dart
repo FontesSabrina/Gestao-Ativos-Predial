@@ -15,31 +15,54 @@ class ChamadoModel extends Chamado {
     super.tecnicoResponsavel,
   });
 
-  // Este método converte o Map do Banco de Dados para a sua Entidade
+
   factory ChamadoModel.fromMap(Map<String, dynamic> map) {
     return ChamadoModel(
       id: map['id'] as String,
-      // Criamos um "esqueleto" de Ativo e Usuario, pois o banco só tem o ID
       ativo: Ativo(
         id: map['ativoId'] as String,
         nome: 'Carregando...', 
         patrimonio: '', 
         localizacao: '', 
         estadoConservacao: '', 
-        dataAquisicao: DateTime.now()
+        dataAquisicao: DateTime.now(),
       ),
       solicitante: Usuario(
         id: map['solicitanteId'] as String? ?? '', 
         nome: 'Carregando...', 
         email: '', 
         perfil: Perfil.solicitante, 
-        senha: ''
+        senha: '',
       ),
-      descricaoFalha: map['descricao'] as String? ?? '',
+      descricaoFalha: map['descricaoFalha'] as String? ?? '',
       prioridade: map['prioridade'] as String? ?? 'Baixa',
-      tipo: TipoManutencao.values.firstWhere((e) => e.name == map['tipo'], orElse: () => TipoManutencao.preventiva),
-      status: StatusChamado.values.firstWhere((e) => e.name == map['status'], orElse: () => StatusChamado.aberto),
-      dataAbertura: DateTime.parse(map['dataCriacao'] as String),
+      tipo: TipoManutencao.values[map['tipo'] ?? 0],
+      status: StatusChamado.values[map['status'] ?? 0],
+      dataAbertura: DateTime.parse(map['dataAbertura'] as String),
+      tecnicoResponsavel: map['tecnicoResponsavelId'] != null
+          ? Usuario(
+              id: map['tecnicoResponsavelId'] as String,
+              nome: 'Carregando...',
+              email: '',
+              perfil: Perfil.tecnicoResponsavel,
+              senha: '',
+            )
+          : null,
     );
+  }
+
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'ativoId': ativo.id,
+      'solicitanteId': solicitante.id,
+      'tecnicoResponsavelId': tecnicoResponsavel?.id,
+      'descricaoFalha': descricaoFalha,
+      'prioridade': prioridade,
+      'tipo': tipo.index,
+      'status': status.index,
+      'dataAbertura': dataAbertura.toIso8601String(),
+    };
   }
 }

@@ -1,7 +1,6 @@
 import '../entities/usuario.dart';
 
 abstract class UsuarioRepository {
-  // Adicione esta linha:
   Future<List<Usuario>> buscarTodos(); 
   Future<Usuario?> buscarPorEmail(String email);
   Future<Usuario?> login(String email, String senha);

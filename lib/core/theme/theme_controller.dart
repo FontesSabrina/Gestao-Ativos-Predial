@@ -7,8 +7,6 @@ class ThemeController extends ChangeNotifier {
 
   void toggleTheme() {
     _themeMode = (_themeMode == ThemeMode.light) ? ThemeMode.dark : ThemeMode.light;
-    notifyListeners(); // ISSO É O QUE FAZ O APP MUDAR DE COR!
+    notifyListeners();
   }
-
-  
 }

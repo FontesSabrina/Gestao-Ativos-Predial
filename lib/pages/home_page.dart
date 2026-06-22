@@ -7,11 +7,12 @@ import '../../domain/repositories/chamado_repository.dart';
 import '../../domain/repositories/notificacao_repository.dart';
 import '../../domain/repositories/estoque_repository.dart';
 import '../../pages/usuarios/cadastro_usuario_page.dart';
-import 'ambiente/lista_ambientes_page.dart';
+import '../../pages/ambiente/lista_ambientes_page.dart';
 import '../../pages/manutencao/minhas_ordens_page.dart';
 import '../../core/theme/theme_controller.dart';
 import '../../main.dart';
 import '../../pages/usuarios/lista_usuarios_page.dart';
+import '../../../routes.dart';
 
 class HomePage extends StatefulWidget {
   final Usuario usuario;
@@ -81,7 +82,6 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        // CORREÇÃO: Título "AURA" agora com a cor azul (primaryColor)
         title: const Text('AURA', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: primaryColor)),
         centerTitle: true,
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
@@ -116,11 +116,11 @@ class _HomePageState extends State<HomePage> {
                   ),
               ],
             ),
-            onPressed: () => Navigator.pushNamed(context, '/notificacoes', arguments: widget.usuario).then((_) => _carregarDadosDoSistema()),
+            onPressed: () => Navigator.pushNamed(context, AppRoutes.notificacoes, arguments: widget.usuario).then((_) => _carregarDadosDoSistema()),
           ),
           IconButton(
             icon: const Icon(Icons.power_settings_new, color: Colors.redAccent),
-            onPressed: () => Navigator.pushReplacementNamed(context, '/login'),
+            onPressed: () => Navigator.pushReplacementNamed(context, AppRoutes.login),
           ),
         ],
       ),
@@ -161,25 +161,25 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(height: 12),
               
               if (isAdmin) ...[
-                _buildCardServico("Gestão de Ativos", "Consulte equipamentos e locais", Icons.domain_rounded, Colors.blue.shade700, Colors.blue.shade50, () => Navigator.pushNamed(context, '/ativos', arguments: widget.usuario)),
-                _buildCardServico("Gerenciamento de Chamados", "Análise e aprovação", Icons.confirmation_number_outlined, Colors.amber.shade800, Colors.amber.shade50, () => Navigator.pushNamed(context, '/chamados', arguments: widget.usuario).then((_) => _carregarDadosDoSistema()), badgeCount: pendentes),
-                _buildCardServico("Ordens de Serviço", "Acompanhe em tempo real", Icons.construction_rounded, Colors.green.shade700, Colors.green.shade50, () => Navigator.pushNamed(context, '/ordens-servico', arguments: widget.usuario)),
-                _buildCardServico("Manutenção Preventiva", "Calendário e alertas", Icons.calendar_today_rounded, Colors.teal.shade700, Colors.teal.shade50, () => Navigator.pushNamed(context, '/planejamento-preventivas', arguments: widget.usuario)),
-                _buildCardServico("Estoque e Peças", "Níveis mínimos e fornecedores", Icons.inventory_2_outlined, Colors.orange.shade700, Colors.orange.shade50, () => Navigator.pushNamed(context, '/estoque', arguments: widget.usuario).then((_) => _carregarDadosDoSistema()), badgeCount: _estoqueCriticoCount),
-                _buildCardServico("Indicadores e BI", "Custo e eficiência", Icons.insights_rounded, Colors.purple.shade700, Colors.purple.shade50, () => Navigator.pushNamed(context, '/indicadores', arguments: widget.usuario)),
-                _buildCardServico("Cadastro de Usuários", "Gerenciar acessos", Icons.person_add_alt_1, Colors.lime.shade800, Colors.lime.shade50, () => Navigator.pushNamed(context, '/usuarios', arguments: widget.usuario)),
-                _buildCardServico("Ambientes", "Lista de locais e cadastros", Icons.list_alt, Colors.pink.shade700, Colors.pink.shade50, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ListaAmbientesPage()))),
+                _buildCardServico("Gestão de Ativos", "Consulte equipamentos e locais", Icons.domain_rounded, Colors.blue.shade700, Colors.blue.shade50, () => Navigator.pushNamed(context, AppRoutes.ativos, arguments: widget.usuario)),
+                _buildCardServico("Gerenciamento de Chamados", "Análise e aprovação", Icons.confirmation_number_outlined, Colors.amber.shade800, Colors.amber.shade50, () => Navigator.pushNamed(context, AppRoutes.chamados, arguments: widget.usuario).then((_) => _carregarDadosDoSistema()), badgeCount: pendentes),
+                _buildCardServico("Ordens de Serviço", "Acompanhe em tempo real", Icons.construction_rounded, Colors.green.shade700, Colors.green.shade50, () => Navigator.pushNamed(context, AppRoutes.ordensServico, arguments: widget.usuario)),
+                _buildCardServico("Manutenção Preventiva", "Calendário e alertas", Icons.calendar_today_rounded, Colors.teal.shade700, Colors.teal.shade50, () => Navigator.pushNamed(context, AppRoutes.planejamentoPreventivas, arguments: widget.usuario)),
+                _buildCardServico("Estoque e Peças", "Níveis mínimos e fornecedores", Icons.inventory_2_outlined, Colors.orange.shade700, Colors.orange.shade50, () => Navigator.pushNamed(context, AppRoutes.estoque, arguments: widget.usuario).then((_) => _carregarDadosDoSistema()), badgeCount: _estoqueCriticoCount),
+                _buildCardServico("Indicadores e BI", "Custo e eficiência", Icons.insights_rounded, Colors.purple.shade700, Colors.purple.shade50, () => Navigator.pushNamed(context, AppRoutes.indicadores, arguments: widget.usuario)),
+                _buildCardServico("Cadastro de Usuários", "Gerenciar acessos", Icons.person_add_alt_1, Colors.lime.shade800, Colors.lime.shade50, () => Navigator.pushNamed(context, AppRoutes.usuarios, arguments: widget.usuario)),
+                _buildCardServico("Ambientes", "Lista de locais e cadastros", Icons.list_alt, Colors.pink.shade700, Colors.pink.shade50, () => Navigator.pushNamed(context, AppRoutes.listaAmbientes)),
               ],
               
               if (isTecnico) ...[
                 _buildCardServico("Minhas Ordens", "Tarefas atribuídas a você", Icons.assignment_ind_rounded, Colors.indigo.shade700, Colors.indigo.shade50, () => Navigator.push(context, MaterialPageRoute(builder: (_) => MinhasOrdensPage(usuarioLogado: widget.usuario)))),
-                _buildCardServico("Gerenciamento de Chamados", "Análise e resolução", Icons.confirmation_number_outlined, Colors.amber.shade800, Colors.amber.shade50, () => Navigator.pushNamed(context, '/chamados', arguments: widget.usuario).then((_) => _carregarDadosDoSistema()), badgeCount: pendentes),
-                _buildCardServico("Consulta de Estoque", "Verificar disponibilidade", Icons.inventory_2_outlined, Colors.orange.shade700, Colors.orange.shade50, () => Navigator.pushNamed(context, '/estoque', arguments: widget.usuario)),
+                _buildCardServico("Gerenciamento de Chamados", "Análise e resolução", Icons.confirmation_number_outlined, Colors.amber.shade800, Colors.amber.shade50, () => Navigator.pushNamed(context, AppRoutes.chamados, arguments: widget.usuario).then((_) => _carregarDadosDoSistema()), badgeCount: pendentes),
+                _buildCardServico("Consulta de Estoque", "Verificar disponibilidade", Icons.inventory_2_outlined, Colors.orange.shade700, Colors.orange.shade50, () => Navigator.pushNamed(context, AppRoutes.estoque, arguments: widget.usuario)),
               ],
 
               if (isSolicitante) ...[
-                _buildCardServico("Abrir Chamado", "Reportar problemas", Icons.add_circle_outline, Colors.blue.shade700, Colors.blue.shade50, () => Navigator.pushNamed(context, '/abrir-chamado', arguments: widget.usuario)),
-                _buildCardServico("Meus Chamados", "Acompanhe seus pedidos", Icons.list_alt, Colors.green.shade700, Colors.green.shade50, () => Navigator.pushNamed(context, '/meus-chamados', arguments: widget.usuario)),
+                _buildCardServico("Abrir Chamado", "Reportar problemas", Icons.add_circle_outline, Colors.blue.shade700, Colors.blue.shade50, () => Navigator.pushNamed(context, AppRoutes.abrirChamado, arguments: widget.usuario)),
+                _buildCardServico("Meus Chamados", "Acompanhe seus pedidos", Icons.list_alt, Colors.green.shade700, Colors.green.shade50, () => Navigator.pushNamed(context, AppRoutes.meusChamados, arguments: widget.usuario)),
               ],
             ],
           ),

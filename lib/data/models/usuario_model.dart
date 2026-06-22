@@ -9,13 +9,16 @@ class UsuarioModel extends Usuario {
     required super.perfil,
   });
 
-factory UsuarioModel.fromMap(Map<String, dynamic> map) {
+  factory UsuarioModel.fromMap(Map<String, dynamic> map) {
+    final index = map['perfil'] ?? 0;
+    final perfilValido = index < Perfil.values.length ? index : Perfil.values.length - 1;
+
     return UsuarioModel(
-      id: map['id'] ?? 0,
+      id: map['id']?.toString() ?? '',
       nome: map['nome']?.toString() ?? 'Usuário', 
-      email: map['email'] ?? '',
-      senha: map['senha'] ?? '',
-      perfil: Perfil.values[map['perfil'] ?? 0],
+      email: map['email']?.toString() ?? '',
+      senha: map['senha']?.toString() ?? '',
+      perfil: Perfil.values[perfilValido],
     );
   }
 

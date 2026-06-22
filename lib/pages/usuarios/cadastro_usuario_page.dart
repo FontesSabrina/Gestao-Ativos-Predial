@@ -20,6 +20,10 @@ class _CadastroUsuarioPageState extends State<CadastroUsuarioPage> {
   final _senhaController = TextEditingController();
   final _confirmarSenhaController = TextEditingController();
   
+  
+  bool _esconderSenha = true;
+  bool _esconderConfirmarSenha = true;
+
   Perfil _perfilSelecionado = Perfil.solicitante;
   static const Color azulFixo = Color(0xFF1A237E);
 
@@ -29,9 +33,17 @@ class _CadastroUsuarioPageState extends State<CadastroUsuarioPage> {
     if (widget.usuario != null) {
       _nomeController.text = widget.usuario!.nome;
       _emailController.text = widget.usuario!.email;
-      // Removida qualquer verificação que envolvesse o perfil de auditor
       _perfilSelecionado = widget.usuario!.perfil;
     }
+  }
+
+  @override
+  void dispose() {
+    _nomeController.dispose();
+    _emailController.dispose();
+    _senhaController.dispose();
+    _confirmarSenhaController.dispose();
+    super.dispose();
   }
 
   @override
@@ -76,7 +88,6 @@ class _CadastroUsuarioPageState extends State<CadastroUsuarioPage> {
                         prefixIcon: Icon(Icons.admin_panel_settings, color: azulFixo),
                         border: OutlineInputBorder()
                       ),
-                      // Agora usamos diretamente o Enum, que só contém os perfis válidos
                       items: Perfil.values.map((p) => DropdownMenuItem(
                         value: p, 
                         child: Text(p.name.toUpperCase())
@@ -85,10 +96,31 @@ class _CadastroUsuarioPageState extends State<CadastroUsuarioPage> {
                     ),
                     const SizedBox(height: 16),
 
-                    _buildTextField(_senhaController, "Senha", Icons.lock, true),
+                    
+                    _buildTextField(
+                      _senhaController, 
+                      "Senha", 
+                      Icons.lock, 
+                      true,
+                      esconderTexto: _esconderSenha,
+                      onToggleVisibility: () {
+                        setState(() => _esconderSenha = !_esconderSenha);
+                      },
+                    ),
                     const SizedBox(height: 16),
-                    _buildTextField(_confirmarSenhaController, "Confirmar Senha", Icons.lock_outline, true,
-                        validator: (value) => value != _senhaController.text ? "As senhas não coincidem" : null),
+                    
+                    
+                    _buildTextField(
+                      _confirmarSenhaController, 
+                      "Confirmar Senha", 
+                      Icons.lock_outline, 
+                      true,
+                      esconderTexto: _esconderConfirmarSenha,
+                      onToggleVisibility: () {
+                        setState(() => _esconderConfirmarSenha = !_esconderConfirmarSenha);
+                      },
+                      validator: (value) => value != _senhaController.text ? "As senhas não coincidem" : null,
+                    ),
                     
                     const SizedBox(height: 24),
                     SizedBox(
@@ -110,7 +142,23 @@ class _CadastroUsuarioPageState extends State<CadastroUsuarioPage> {
                             );
                             
                             await GetIt.I<UsuarioRepository>().salvar(novoUsuario);
-                            if (mounted) Navigator.pop(context);
+                            
+                            if (mounted) {
+                              
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    isEdicao 
+                                        ? "Usuário atualizado com sucesso!" 
+                                        : "Usuário cadastrado com sucesso!",
+                                    style: const TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  backgroundColor: Colors.green,
+                                  duration: const Duration(seconds: 2),
+                                ),
+                              );
+                              Navigator.pop(context);
+                            }
                           }
                         },
                         child: Text(
@@ -129,13 +177,30 @@ class _CadastroUsuarioPageState extends State<CadastroUsuarioPage> {
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String label, IconData icon, bool isPassword, {String? Function(String?)? validator}) {
+  Widget _buildTextField(
+    TextEditingController controller, 
+    String label, 
+    IconData icon, 
+    bool isPassword, {
+    bool esconderTexto = false,
+    VoidCallback? onToggleVisibility,
+    String? Function(String?)? validator,
+  }) {
     return TextFormField(
       controller: controller,
-      obscureText: isPassword,
+      obscureText: isPassword ? esconderTexto : false,
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(icon, color: azulFixo),
+        suffixIcon: isPassword 
+            ? IconButton(
+                icon: Icon(
+                  esconderTexto ? Icons.visibility_off : Icons.visibility,
+                  color: Colors.grey,
+                ),
+                onPressed: onToggleVisibility,
+              )
+            : null,
         border: const OutlineInputBorder(),
       ),
       validator: validator ?? (value) => value!.isEmpty ? "Campo obrigatório" : null,

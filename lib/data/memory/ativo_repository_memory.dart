@@ -40,7 +40,7 @@ class AtivoRepositoryMemory extends RepositoryMemoryBase<Ativo> implements Ativo
 
   @override
 Future<List<Ativo>> buscarPorLocalizacao(String localizacao) async {
-  await connect(); // Garante que os dados estejam carregados
+  await connect();
   return dataMemory.where((ativo) => ativo.localizacao == localizacao).toList();
 }
 }

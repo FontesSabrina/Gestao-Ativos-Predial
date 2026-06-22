@@ -10,7 +10,6 @@ import 'service_locator.dart';
 import 'routes.dart';
 import 'core/theme/theme_controller.dart';
 
-// 1. Gerenciador Global de Escala
 final ValueNotifier<double> fontScaleNotifier = ValueNotifier<double>(1.0);
 
 void main() async {
@@ -53,7 +52,6 @@ class MyApp extends StatelessWidget {
           darkTheme: ThemeData.dark().copyWith(
             colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1A237E), brightness: Brightness.dark),
           ),
-          // 2. Aplicação da Escala Global
           builder: (context, child) {
             return MediaQuery(
               data: MediaQuery.of(context).copyWith(

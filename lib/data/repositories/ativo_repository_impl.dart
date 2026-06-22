@@ -27,11 +27,8 @@ class AtivoRepositoryImpl implements AtivoRepository {
     await localDataSource.excluir(id);
   }
 
-  // --- CORREÇÃO DO ERRO ---
-  // O seu VS Code está pedindo este método que você definiu na interface:
   @override
   Future<List<Ativo>> buscarPorLocalizacao(String localizacao) async {
-    // Busca todos e filtra pelo campo localizacao do seu objeto Ativo
     final todos = await localDataSource.buscarTodos();
     return todos.where((ativo) => ativo.localizacao == localizacao).toList();
   }

@@ -49,8 +49,7 @@ class _NotificacoesPageState extends State<NotificacoesPage> {
           }
           
           final lista = snapshot.data ?? [];
-          
-          // Envolvemos o conteúdo em Center + ConstrainedBox para centralizar
+
           return Center(
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 800),

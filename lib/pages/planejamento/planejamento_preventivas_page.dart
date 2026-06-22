@@ -72,7 +72,6 @@ class _CronogramaTabState extends State<_CronogramaTab> with AutomaticKeepAliveC
     super.build(context);
     final theme = Theme.of(context);
     
-    // Envolvemos tudo em um Center + ConstrainedBox para centralizar
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 800),
@@ -145,7 +144,6 @@ class _AlertasTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Centralizando a tab de alertas
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 800),

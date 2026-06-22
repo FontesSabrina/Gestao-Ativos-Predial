@@ -1,17 +1,17 @@
 import 'package:sqflite/sqflite.dart';
+import '../../models/ativo_model.dart';
 import '../../../domain/entities/ativo.dart';
 
 class AtivoLocalDataSource {
-  final Database _db; // Agora usamos uma variável local para o banco
+  final Database _db; 
   final String _tableName = 'ativos';
 
-  // O construtor recebe o banco injetado pelo ServiceLocator
   AtivoLocalDataSource(this._db);
 
   Future<List<Ativo>> buscarTodos() async {
     try {
-      final maps = await _db.query(_tableName); // Usamos o _db injetado
-      return maps.map((map) => Ativo.fromMap(map)).toList();
+      final maps = await _db.query(_tableName); 
+      return maps.map((map) => AtivoModel.fromMap(map)).toList();
     } catch (e) {
       throw Exception("Erro ao buscar todos os ativos: $e");
     }
@@ -21,7 +21,7 @@ class AtivoLocalDataSource {
     try {
       final maps = await _db.query(_tableName, where: 'id = ?', whereArgs: [id]);
       if (maps.isNotEmpty) {
-        return Ativo.fromMap(maps.first);
+        return AtivoModel.fromMap(maps.first);
       }
       return null;
     } catch (e) {
@@ -31,9 +31,18 @@ class AtivoLocalDataSource {
 
   Future<void> salvar(Ativo ativo) async {
     try {
+      final modelo = AtivoModel(
+        id: ativo.id,
+        nome: ativo.nome,
+        patrimonio: ativo.patrimonio,
+        localizacao: ativo.localizacao,
+        estadoConservacao: ativo.estadoConservacao,
+        dataAquisicao: ativo.dataAquisicao,
+      );
+
       await _db.insert(
         _tableName, 
-        ativo.toMap(), 
+        modelo.toMap(), 
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
     } catch (e) {

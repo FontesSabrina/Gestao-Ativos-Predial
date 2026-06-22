@@ -25,7 +25,6 @@ class EstoqueRepositoryMemory extends RepositoryMemoryBase<ItemEstoque> implemen
   @override
   Future<ItemEstoque?> buscarPorId(String id) async {
     await connect();
-    // Usando orElse para evitar exceções
     return dataMemory.cast<ItemEstoque?>().firstWhere(
       (item) => item?.id == id, 
       orElse: () => null
@@ -38,7 +37,6 @@ class EstoqueRepositoryMemory extends RepositoryMemoryBase<ItemEstoque> implemen
     final index = dataMemory.indexWhere((item) => item.id == id);
     if (index != -1) {
       final item = dataMemory[index];
-      // Mantendo o padrão de atualização via copyWith (certifique-se que existe na sua entidade)
       dataMemory[index] = item.copyWith(quantidade: novaQuantidade);
     }
   }
@@ -57,7 +55,6 @@ class EstoqueRepositoryMemory extends RepositoryMemoryBase<ItemEstoque> implemen
   @override
   Future<List<ItemEstoque>> buscarItensAbaixoDoMinimo() async {
     await connect();
-    // Aqui usamos o nivelMinimo da entidade, em vez de hardcode '5'
     return dataMemory.where((item) => item.quantidade < item.nivelMinimo).toList();
   }
 

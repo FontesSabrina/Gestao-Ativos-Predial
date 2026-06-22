@@ -81,7 +81,7 @@ class OrdemServicoRepositoryMemory extends RepositoryMemoryBase<OrdemServico> im
     return dataMemory.where((os) => os.tecnicoResponsavelId == idTecnico).toList();
   }
 
-  // MÉTODO FALTANTE ADICIONADO ABAIXO:
+
   @override
   Future<List<OrdemServico>> buscarPorData(DateTime data) async {
     await connect();

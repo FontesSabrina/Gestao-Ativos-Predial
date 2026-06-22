@@ -1,17 +1,17 @@
 import 'package:sqflite/sqflite.dart';
-import 'database_helper.dart';
+import '../../models/chamado_model.dart';
 import '../../../domain/entities/chamado.dart';
 
 class ChamadoLocalDataSource {
-  final Database _db; // Agora injetamos o banco aqui
+  final Database _db; 
   final String _tableName = 'chamados';
 
-  ChamadoLocalDataSource(this._db); // Construtor
+  ChamadoLocalDataSource(this._db); 
 
   Future<List<Chamado>> buscarTodos() async {
     try {
-      final maps = await _db.query(_tableName); // Usa _db, não o singleton
-      return maps.map((map) => Chamado.fromMap(map)).toList();
+      final maps = await _db.query(_tableName); 
+      return maps.map((map) => ChamadoModel.fromMap(map)).toList();
     } catch (e) {
       throw Exception("Erro ao buscar todos os chamados: $e");
     }
@@ -19,14 +19,13 @@ class ChamadoLocalDataSource {
 
   Future<Chamado?> buscarPorId(String id) async {
     try {
-      final db = await DatabaseHelper.instance.database;
-      final maps = await db.query(
+      final maps = await _db.query(
         _tableName, 
         where: 'id = ?', 
         whereArgs: [id],
       );
       if (maps.isNotEmpty) {
-        return Chamado.fromMap(maps.first);
+        return ChamadoModel.fromMap(maps.first);
       }
       return null;
     } catch (e) {
@@ -36,10 +35,21 @@ class ChamadoLocalDataSource {
 
   Future<void> salvar(Chamado chamado) async {
     try {
-      final db = await DatabaseHelper.instance.database;
-      await db.insert(
+      final modelo = ChamadoModel(
+        id: chamado.id,
+        ativo: chamado.ativo,
+        solicitante: chamado.solicitante,
+        descricaoFalha: chamado.descricaoFalha,
+        prioridade: chamado.prioridade,
+        tipo: chamado.tipo,
+        status: chamado.status,
+        dataAbertura: chamado.dataAbertura,
+        tecnicoResponsavel: chamado.tecnicoResponsavel,
+      );
+
+      await _db.insert(
         _tableName, 
-        chamado.toMap(), 
+        modelo.toMap(), 
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
     } catch (e) {
@@ -49,8 +59,7 @@ class ChamadoLocalDataSource {
 
   Future<void> excluir(String id) async {
     try {
-      final db = await DatabaseHelper.instance.database;
-      await db.delete(
+      await _db.delete(
         _tableName, 
         where: 'id = ?', 
         whereArgs: [id],

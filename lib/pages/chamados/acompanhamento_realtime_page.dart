@@ -42,7 +42,7 @@ class AcompanhamentoRealTimePage extends StatelessWidget {
             ],
           ),
         ),
-        // CORREÇÃO: Passando o usuário para cada widget de lista
+
         body: TabBarView(
           children: [
             ListaPorStatusWidget(statusFiltrado: StatusChamado.aberto, usuario: usuario),

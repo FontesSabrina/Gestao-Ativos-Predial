@@ -13,13 +13,13 @@ class ItemEstoqueModel extends ItemEstoque {
 
   factory ItemEstoqueModel.fromMap(Map<String, dynamic> map) {
     return ItemEstoqueModel(
-      id: map['id'],
-      nome: map['nome'],
-      quantidade: map['quantidade'],
-      nivelMinimo: map['nivelMinimo'],
-      unidadeMedida: map['unidadeMedida'],
-      fornecedor: map['fornecedor'],
-      precoUnitario: (map['precoUnitario'] as num).toDouble(),
+      id: map['id']?.toString() ?? '',
+      nome: map['nome']?.toString() ?? 'Sem nome',
+      quantidade: (map['quantidade'] as num?)?.toInt() ?? 0,
+      nivelMinimo: (map['nivelMinimo'] as num?)?.toInt() ?? 5,
+      unidadeMedida: map['unidadeMedida']?.toString() ?? 'Unidade',
+      fornecedor: map['fornecedor']?.toString() ?? 'Sem fornecedor',
+      precoUnitario: (map['precoUnitario'] as num?)?.toDouble() ?? 0.0,
     );
   }
 

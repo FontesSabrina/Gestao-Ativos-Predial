@@ -7,12 +7,12 @@ import '../../chamados/chamado_aprovacao_page.dart';
 
 class ListaPorStatusWidget extends StatefulWidget {
   final StatusChamado statusFiltrado;
-  final Usuario usuario; // Adicionado
+  final Usuario usuario;
 
   const ListaPorStatusWidget({
     super.key, 
     required this.statusFiltrado,
-    required this.usuario, // Adicionado
+    required this.usuario, 
   });
 
   @override
@@ -88,7 +88,6 @@ class _ListaPorStatusWidgetState extends State<ListaPorStatusWidget> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        // CORREÇÃO: Passando o usuário logado aqui também!
                         builder: (_) => ChamadoAprovacaoPage(
                           chamado: chamado, 
                           usuarioLogado: widget.usuario

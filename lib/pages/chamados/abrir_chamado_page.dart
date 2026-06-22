@@ -25,7 +25,7 @@ class _AbrirChamadoPageState extends State<AbrirChamadoPage> {
   String _prioridadeSelecionada = 'Média';
   TipoManutencao _tipoSelecionado = TipoManutencao.corretiva;
 
-  // Cor padrão do projeto
+
   static const Color azulFixo = Color(0xFF1A237E);
 
   @override

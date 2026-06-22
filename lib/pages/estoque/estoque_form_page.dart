@@ -94,7 +94,6 @@ class _EstoqueFormPageState extends State<EstoqueFormPage> {
                         children: [
                           Expanded(child: _buildTextField(_qtdController, "Qtd. Atual", Icons.numbers, isNumber: true)),
                           const SizedBox(width: 16),
-                          // Alteração aqui: isLettersOnly: true para restringir a apenas letras
                           Expanded(child: _buildTextField(_unidadeController, "Unidade", Icons.straighten, isLettersOnly: true, hintText: "Ex: Kg, L, Un")),
                         ],
                       ),

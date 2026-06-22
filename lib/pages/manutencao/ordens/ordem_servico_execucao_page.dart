@@ -37,6 +37,14 @@ class _OrdemServicoExecucaoPageState extends State<OrdemServicoExecucaoPage> {
     _custoMaoDeObraController.text = widget.ordem.custoMaoDeObra.toStringAsFixed(2);
   }
 
+  @override
+  void dispose() {
+    _relatoController.dispose();
+    _custoPecasController.dispose();
+    _custoMaoDeObraController.dispose();
+    super.dispose();
+  }
+
   Future<void> _selecionarDataHora(bool isInicio) async {
     final DateTime? data = await showDatePicker(
       context: context,
@@ -66,7 +74,10 @@ class _OrdemServicoExecucaoPageState extends State<OrdemServicoExecucaoPage> {
     
     if (_dataHoraFim.isBefore(_dataHoraInicio)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('A data final não pode ser anterior à inicial!'), backgroundColor: Colors.orange),
+        const SnackBar(
+          content: Text('A data final não pode ser anterior à inicial!'), 
+          backgroundColor: Colors.orange
+        ),
       );
       return;
     }
@@ -84,14 +95,35 @@ class _OrdemServicoExecucaoPageState extends State<OrdemServicoExecucaoPage> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('O.S. finalizada com sucesso!'), backgroundColor: Colors.green),
+          SnackBar(
+            content: const Row(
+              children: [
+                Icon(Icons.check_circle, color: Colors.white),
+                SizedBox(width: 10),
+                Text(
+                  'Ordem de Serviço finalizada com sucesso!', 
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            duration: const Duration(seconds: 2),
+          ),
         );
+        
         await Future.delayed(const Duration(seconds: 1));
         if (mounted) Navigator.pop(context, true);
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erro: $e'), backgroundColor: Colors.red));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro ao finalizar O.S.: $e'), 
+            backgroundColor: Colors.red
+          ),
+        );
       }
     }
   }
@@ -106,7 +138,7 @@ class _OrdemServicoExecucaoPageState extends State<OrdemServicoExecucaoPage> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('Execução Técnica', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+        title: const Text('Execução Técnico', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
         backgroundColor: primaryColor,
         iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,

@@ -16,10 +16,8 @@ class ChamadoRepositoryImpl implements ChamadoRepository {
 
   @override
   Future<void> salvar(Chamado chamado) async {
-    // 1. Salva no banco de dados
     await localDataSource.salvar(chamado);
 
-    // 2. Dispara a notificação (agora com verificação de tamanho para não quebrar)
     await NotificacaoService.disparar(
       'ADMIN_ID', 
       'Novo Chamado Criado',

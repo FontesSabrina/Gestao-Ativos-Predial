@@ -18,31 +18,6 @@ class Ativo {
     required this.dataAquisicao,
   });
 
-  // --- PADRÃO AURA PARA SQLite ---
-
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'patrimonio': patrimonio,
-      'nome': nome,
-      'localizacao': localizacao,
-      'estadoConservacao': estadoConservacao,
-      'dataAquisicao': dataAquisicao.toIso8601String(),
-    };
-  }
-
-  factory Ativo.fromMap(Map<String, dynamic> map) {
-    return Ativo(
-      id: map['id'],
-      patrimonio: map['patrimonio'],
-      nome: map['nome'],
-      localizacao: map['localizacao'],
-      estadoConservacao: map['estadoConservacao'],
-      dataAquisicao: DateTime.parse(map['dataAquisicao']),
-    );
-  }
-
-  // Método copyWith para facilitar as atualizações no estado
   Ativo copyWith({
     String? patrimonio,
     String? nome,

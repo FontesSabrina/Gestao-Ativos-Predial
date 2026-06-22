@@ -1,15 +1,15 @@
-import 'package:sqflite/sqflite.dart';
 import '../../domain/entities/ordem_servico.dart';
 import '../../domain/repositories/ordem_servico_repository.dart';
-import '../datasources/local/database_helper.dart';
+import '../datasources/local/ordem_servico_local_datasource.dart';
 import '../models/ordem_servico_model.dart';
 
 class OrdemServicoRepositoryImpl implements OrdemServicoRepository {
-  final DatabaseHelper _dbHelper = DatabaseHelper.instance;
+  final OrdemServicoLocalDataSource _localDataSource;
+
+  OrdemServicoRepositoryImpl(this._localDataSource);
 
   @override
   Future<void> salvar(OrdemServico os) async {
-    final db = await _dbHelper.database;
     final model = OrdemServicoModel(
       id: os.id,
       ativoId: os.ativoId,
@@ -29,63 +29,58 @@ class OrdemServicoRepositoryImpl implements OrdemServicoRepository {
       aprovadorId: os.aprovadorId,
     );
 
-    // O 'conflictAlgorithm' garante que se o ID já existir, ele será atualizado
-    await db.insert(
-      'ordens_servico',
-      model.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    await _localDataSource.salvar(model);
   }
 
   @override
   Future<List<OrdemServico>> buscarTodos() async {
-    final db = await _dbHelper.database;
-    final List<Map<String, dynamic>> maps = await db.query('ordens_servico');
+    final List<Map<String, dynamic>> maps = await _localDataSource.buscarTodas();
     return maps.map((map) => OrdemServicoModel.fromMap(map)).toList();
   }
 
   @override
   Future<OrdemServico?> buscarPorId(String id) async {
-    final db = await _dbHelper.database;
-    final maps = await db.query('ordens_servico', where: 'id = ?', whereArgs: [id]);
-    if (maps.isEmpty) return null;
-    return OrdemServicoModel.fromMap(maps.first);
+    final maps = await _localDataSource.buscarTodas();
+    final item = maps.firstWhere((map) => map['id'] == id, orElse: () => {});
+    if (item.isEmpty) return null;
+    return OrdemServicoModel.fromMap(item);
   }
 
   @override
   Future<void> excluir(String id) async {
-    final db = await _dbHelper.database;
-    await db.delete('ordens_servico', where: 'id = ?', whereArgs: [id]);
   }
 
-  // Métodos que podem ser implementados conforme a necessidade futura:
   @override
   Future<List<OrdemServico>> buscarPorStatus(StatusOS status) async {
-    final db = await _dbHelper.database;
-    final maps = await db.query('ordens_servico', where: 'status = ?', whereArgs: [status.index]);
+    final maps = await _localDataSource.buscarPorStatus(status.index);
     return maps.map((map) => OrdemServicoModel.fromMap(map)).toList();
   }
 
   @override
   Future<List<OrdemServico>> buscarPorTecnico(String idTecnico) async {
-    final db = await _dbHelper.database;
-    final maps = await db.query('ordens_servico', where: 'tecnicoResponsavelId = ?', whereArgs: [idTecnico]);
-    return maps.map((map) => OrdemServicoModel.fromMap(map)).toList();
+    final maps = await _localDataSource.buscarTodas();
+    return maps
+        .where((map) => map['tecnicoResponsavelId'] == idTecnico)
+        .map((map) => OrdemServicoModel.fromMap(map))
+        .toList();
   }
 
   @override
   Future<List<OrdemServico>> buscarPorAtivo(String idAtivo) async {
-    final db = await _dbHelper.database;
-    final maps = await db.query('ordens_servico', where: 'ativoId = ?', whereArgs: [idAtivo]);
-    return maps.map((map) => OrdemServicoModel.fromMap(map)).toList();
+    final maps = await _localDataSource.buscarTodas();
+    return maps
+        .where((map) => map['ativoId'] == idAtivo)
+        .map((map) => OrdemServicoModel.fromMap(map))
+        .toList();
   }
 
   @override
   Future<List<OrdemServico>> buscarPorData(DateTime data) async {
-    // Busca ordens abertas na data específica
-    final db = await _dbHelper.database;
+    final maps = await _localDataSource.buscarTodas();
     final dataStr = data.toIso8601String().substring(0, 10);
-    final maps = await db.query('ordens_servico', where: "dataAbertura LIKE ?", whereArgs: ['$dataStr%']);
-    return maps.map((map) => OrdemServicoModel.fromMap(map)).toList();
+    return maps
+        .where((map) => map['dataAbertura'].toString().startsWith(dataStr))
+        .map((map) => OrdemServicoModel.fromMap(map))
+        .toList();
   }
 }

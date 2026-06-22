@@ -34,14 +34,12 @@ class UsuarioRepositoryImpl implements UsuarioRepository {
 
   @override
   Future<List<Usuario>> buscarPorPerfil(Perfil perfil) async {
-    // Filtramos a lista de usuários baseada no enum de perfil
     final todos = await localDataSource.buscarTodos();
     return todos.where((u) => u.perfil == perfil).toList();
   }
 
   @override
   Future<Usuario?> login(String email, String senha) async {
-    // A lógica de login deve ser validada aqui ou no DataSource
     final usuario = await localDataSource.buscarPorEmail(email);
     if (usuario != null && usuario.senha == senha) {
       return usuario;

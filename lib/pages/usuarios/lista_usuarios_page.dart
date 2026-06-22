@@ -37,8 +37,8 @@ class _ListaUsuariosPageState extends State<ListaUsuariosPage> {
   void _filtrar() {
     setState(() {
       _usuariosFiltrados = _usuarios.where((u) {
-        final matchBusca = u.nome.toLowerCase().contains(_busca.toLowerCase()) || 
-                           u.email.toLowerCase().contains(_busca.toLowerCase());
+        final matchBusca = u.nome.toLowerCase().contains(_busca.toLowerCase()) ||
+                          u.email.toLowerCase().contains(_busca.toLowerCase());
         final matchPerfil = _filtroPerfil == null || u.perfil == _filtroPerfil;
         return matchBusca && matchPerfil;
       }).toList();

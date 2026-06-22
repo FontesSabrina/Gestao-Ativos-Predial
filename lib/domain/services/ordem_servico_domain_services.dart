@@ -16,12 +16,10 @@ class OrdemServicoDomainServices {
     required double custoMaoDeObra,
     required Usuario executor,
   }) async {
-    // Regra de Negócio: Verificação de perfil
     if (executor.perfil != Perfil.tecnicoResponsavel && executor.perfil != Perfil.administrador) {
-    throw Exception("Usuário não tem permissão para finalizar ordens.");
+      throw Exception("Usuário não tem permissão para finalizar ordens.");
     }
 
-    // Usando copyWith para atualizar o estado de forma segura e limpa
     final osFinalizada = ordem.copyWith(
       status: StatusOS.concluida,
       relatotecnico: relato,

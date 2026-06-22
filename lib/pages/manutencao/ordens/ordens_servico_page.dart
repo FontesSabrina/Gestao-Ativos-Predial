@@ -97,7 +97,7 @@ class _ListaOSState extends State<_ListaOS> with AutomaticKeepAliveClientMixin {
     super.build(context);
     final filtradas = widget.ordens.where((os) => os.status == widget.status).toList();
 
-    // Centraliza o texto quando vazio
+
     if (filtradas.isEmpty) {
       return Center(
         child: Text(
@@ -107,7 +107,6 @@ class _ListaOSState extends State<_ListaOS> with AutomaticKeepAliveClientMixin {
       );
     }
 
-    // Centraliza a lista em telas grandes
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 800),
