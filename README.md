@@ -51,3 +51,37 @@ lib/
  ├── pages/         # Interface de usuário (UI) dividida por módulos (ambiente, ativos, chamados...)
  └── main.dart      # Inicialização do Service Locator (GetIt) e do App
 
+🏁 Como Executar o Projeto Localmente
+Clonar o repositório:
+
+Bash
+git clone [https://github.com/FontesSabrina/Gestao-Ativos-Predial.git](https://github.com/FontesSabrina/Gestao-Ativos-Predial.git)
+Navegar até à pasta raiz do projeto:
+
+Bash
+cd Gestao-Ativos-Predial
+Obter as dependências do projeto:
+
+Bash
+flutter pub get
+Habilitar o suporte Windows (se necessário) e rodar:
+
+Bash
+flutter config --enable-windows-desktop
+flutter run -d windows
+🧑‍💻 Autores (IFSUDESTEMG - Campus Muriaé)
+Trabalho desenvolvido para o curso de Gestão da Tecnologia da Informação:
+
+Alexandre do Amaral Quintão — Desenvolvedor do Projeto
+
+Sabrina Caetano Fontes — Desenvolvedora do Projeto
+
+Developed as part of the GTI Academic Projects ecosystem. 🚀
+
+
+Pode salvar esse arquivo por cima do outro. Para atualizar no GitHub sem esses códigos esquisitos, rode no terminal:
+
+```bash
+git add README.md
+git commit -m "docs: remove tags de citacao do arquivo readme"
+git push origin main
